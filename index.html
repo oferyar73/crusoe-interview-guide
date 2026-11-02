@@ -7,19 +7,6 @@
   <meta http-equiv="Pragma" content="no-cache">
   <meta http-equiv="Expires" content="0">
   <title>מדריך הכנה לראיון בחברת Crusoe: לימוד Kubernetes, K9s, GPU/CUDA, InfiniBand ו-SLURM</title>
-  <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
-  <script>
-    document.addEventListener("DOMContentLoaded", function() {
-      if (window.mermaid) {
-        mermaid.initialize({
-          startOnLoad: true,
-          theme: 'dark',
-          securityLevel: 'loose',
-          flowchart: { useMaxWidth: true, htmlLabels: true, curve: 'basis' }
-        });
-      }
-    });
-  </script>
   <style>
     :root {
       --bg: #0f172a;
@@ -36,6 +23,8 @@
       --amber-bg: rgba(245, 158, 11, 0.15);
       --rose: #f43f5e;
       --rose-bg: rgba(244, 63, 94, 0.15);
+      --purple: #a855f7;
+      --purple-bg: rgba(168, 85, 247, 0.15);
       --code-bg: #090d16;
     }
     * {
@@ -55,7 +44,7 @@
       line-height: 1.75;
     }
     .container {
-      max-width: 1080px;
+      max-width: 1100px;
       margin: 0 auto;
       padding: 24px 16px 60px;
     }
@@ -178,16 +167,6 @@
       margin: 12px 0;
       line-height: 1.55;
     }
-    .mermaid-box {
-      direction: ltr;
-      background: #090d16;
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 20px;
-      margin: 16px 0;
-      text-align: center;
-      overflow-x: auto;
-    }
     table {
       width: 100%;
       border-collapse: collapse;
@@ -231,11 +210,115 @@
     .qa-box.open .qa-answer {
       display: block;
     }
+
+    /* ==========================================
+       BEAUTIFUL CUSTOM ARCHITECTURE DIAGRAMS
+       ========================================== */
+    .diagram-card {
+      background: linear-gradient(180deg, #090d16 0%, #0f172a 100%);
+      border: 1px solid #334155;
+      border-radius: 14px;
+      padding: 22px 18px;
+      margin: 20px 0;
+      box-shadow: inset 0 0 30px rgba(0,0,0,0.5), 0 8px 20px rgba(0,0,0,0.3);
+      direction: ltr;
+      text-align: center;
+    }
+    .diagram-title {
+      direction: rtl;
+      color: #93c5fd;
+      font-weight: 700;
+      font-size: 0.95rem;
+      margin-bottom: 16px;
+      display: inline-block;
+      background: rgba(59, 130, 246, 0.12);
+      border: 1px solid rgba(59, 130, 246, 0.35);
+      padding: 4px 14px;
+      border-radius: 999px;
+    }
+    .diag-subgraph {
+      border: 2px dashed #475569;
+      background: rgba(30, 41, 59, 0.55);
+      border-radius: 12px;
+      padding: 16px;
+      margin: 0 auto;
+      max-width: 780px;
+      position: relative;
+    }
+    .diag-subgraph-title {
+      font-family: Consolas, Monaco, monospace;
+      font-weight: 800;
+      font-size: 0.9rem;
+      color: #f8fafc;
+      background: #1e293b;
+      border: 1px solid #64748b;
+      padding: 3px 12px;
+      border-radius: 6px;
+      display: inline-block;
+      margin-bottom: 14px;
+    }
+    .diag-row {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 14px;
+      flex-wrap: wrap;
+    }
+    .diag-node {
+      background: #1e293b;
+      border: 2px solid #3b82f6;
+      border-radius: 10px;
+      padding: 10px 14px;
+      min-width: 155px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.35);
+      transition: transform 0.15s;
+    }
+    .diag-node:hover {
+      transform: translateY(-2px);
+    }
+    .diag-node .en {
+      font-family: Consolas, Monaco, monospace;
+      font-weight: 700;
+      font-size: 0.88rem;
+      color: #fff;
+      display: block;
+    }
+    .diag-node .he {
+      direction: rtl;
+      font-size: 0.76rem;
+      color: #cbd5e1;
+      display: block;
+      margin-top: 3px;
+    }
+    .diag-node.blue { border-color: #3b82f6; background: rgba(59, 130, 246, 0.14); }
+    .diag-node.emerald { border-color: #10b981; background: rgba(16, 185, 129, 0.14); }
+    .diag-node.amber { border-color: #f59e0b; background: rgba(245, 158, 11, 0.14); }
+    .diag-node.purple { border-color: #a855f7; background: rgba(168, 85, 247, 0.14); }
+    .diag-node.rose { border-color: #f43f5e; background: rgba(244, 63, 94, 0.14); }
+    .diag-node.db {
+      border-radius: 22px / 12px;
+      border-color: #f59e0b;
+      background: rgba(245, 158, 11, 0.16);
+    }
+    .diag-arrow-v {
+      color: #60a5fa;
+      font-family: Consolas, monospace;
+      font-size: 0.85rem;
+      font-weight: 700;
+      margin: 8px 0;
+      line-height: 1.2;
+    }
+    .diag-arrow-h {
+      color: #60a5fa;
+      font-weight: 800;
+      font-size: 1.1rem;
+    }
+
     @media print {
       body { background: #fff; color: #000; }
-      .card, .subcard, .hero, .mermaid-box { background: #fff; border-color: #ccc; color: #000; box-shadow: none; }
+      .card, .subcard, .hero, .diagram-card, .diag-subgraph, .diag-node { background: #fff !important; border-color: #666 !important; color: #000 !important; box-shadow: none !important; }
       .nav-tabs { display: none; }
-      strong, h1, h2, h3, h4 { color: #000 !important; }
+      strong, h1, h2, h3, h4, .diag-node .en, .diag-node .he, .diagram-title { color: #000 !important; }
       ul, ol, p, td { color: #222 !important; }
       code { background: #eee; color: #000; border-color: #999; }
     }
@@ -296,30 +379,72 @@
         </li>
       </ul>
 
-      <div class="mermaid-box">
-        <div class="mermaid">
-flowchart TB
-    subgraph ControlPlane["Control Plane"]
-        API["kube-apiserver"]
-        ETCD[("etcd")]
-        SCHED["kube-scheduler"]
-        CM["controller-manager"]
-        API &lt;--&gt; ETCD
-        SCHED --&gt; API
-        CM --&gt; API
-    end
+      <!-- DIAGRAM 1: K8S CONTROL PLANE & GPU WORKER NODE -->
+      <div class="diagram-card">
+        <div class="diagram-title">תרשים 1: ארכיטקטורת קלאסטר Kubernetes ב-Crusoe (Control Plane מול GPU Worker Node)</div>
 
-    subgraph WorkerNode["GPU Worker Node"]
-        KUBELET["kubelet"]
-        PROXY["kube-proxy"]
-        RUNTIME["containerd + nvidia-container-toolkit"]
-        POD1["Pod (GPU App)"]
-        KUBELET --&gt; RUNTIME
-        RUNTIME --&gt; POD1
-    end
+        <!-- Control Plane Subgraph -->
+        <div class="diag-subgraph" style="border-color:#3b82f6;">
+          <div class="diag-subgraph-title" style="border-color:#3b82f6; color:#93c5fd;">Control Plane (Master)</div>
+          <div class="diag-row">
+            <div class="diag-node purple">
+              <span class="en">kube-scheduler</span>
+              <span class="he">שיבוץ פודים לשרתי GPU פנויים</span>
+            </div>
+            <div class="diag-arrow-h">──▶</div>
+            <div class="diag-node blue" style="min-width:190px; border-width:3px;">
+              <span class="en">kube-apiserver</span>
+              <span class="he">שער ה-REST API המרכזי</span>
+            </div>
+            <div class="diag-arrow-h">◀──▶</div>
+            <div class="diag-node db">
+              <span class="en">etcd</span>
+              <span class="he">מסד נתונים (Key-Value State)</span>
+            </div>
+          </div>
+          <div class="diag-arrow-v">▲<br>│</div>
+          <div class="diag-row">
+            <div class="diag-node purple">
+              <span class="en">kube-controller-manager</span>
+              <span class="he">שמירה על Desired State (ReplicaSet, Node, Job)</span>
+            </div>
+          </div>
+        </div>
 
-    API &lt;--&gt; KUBELET
-    API &lt;--&gt; PROXY
+        <div class="diag-arrow-v" style="font-size:0.95rem; color:#38bdf8; margin:12px 0;">
+          ▲ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ▲<br>
+          │ REST API (HTTPS) &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; │ Watch Services / Endpoints<br>
+          ▼ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ▼
+        </div>
+
+        <!-- Worker Node Subgraph -->
+        <div class="diag-subgraph" style="border-color:#10b981;">
+          <div class="diag-subgraph-title" style="border-color:#10b981; color:#6ee7b7;">GPU Worker Node (Bare-Metal H100 / H200 Server)</div>
+          <div class="diag-row">
+            <div class="diag-node blue">
+              <span class="en">kubelet</span>
+              <span class="he">סוכן השרת המנהל את הפודים</span>
+            </div>
+            <div style="width:40px;"></div>
+            <div class="diag-node amber">
+              <span class="en">kube-proxy</span>
+              <span class="he">חוקי ניתוב רשת (iptables / IPVS)</span>
+            </div>
+          </div>
+          <div class="diag-arrow-v">│<br>▼</div>
+          <div class="diag-row">
+            <div class="diag-node purple" style="min-width:300px;">
+              <span class="en">containerd + nvidia-container-toolkit</span>
+              <span class="he">מנוע הרצת הקונטיינרים וחיבור כרטיסי ה-GPU</span>
+            </div>
+          </div>
+          <div class="diag-arrow-v">│<br>▼</div>
+          <div class="diag-row">
+            <div class="diag-node emerald" style="min-width:260px; border-width:2.5px;">
+              <span class="en">Pod (GPU App / PyTorch Training)</span>
+              <span class="he">קונטיינר האימון עם גישה ל-GPUs ול-InfiniBand</span>
+            </div>
+          </div>
         </div>
       </div>
 
@@ -367,6 +492,48 @@ flowchart TB
           </ul>
         </li>
       </ul>
+
+      <!-- DIAGRAM 2: K8S OBJECT HIERARCHY & CONNECTIONS -->
+      <div class="diagram-card">
+        <div class="diagram-title">תרשים 2: איך כל האובייקטים ב-Kubernetes מתחברים יחד סביב הפוד</div>
+        <div class="diag-subgraph" style="border-color:#64748b;">
+          <div class="diag-subgraph-title">Namespace: ai-training (ResourceQuota: 16 GPUs)</div>
+
+          <div class="diag-row">
+            <div class="diag-node purple">
+              <span class="en">Deployment</span>
+              <span class="he">ניהול גרסאות (RollingUpdate / Recreate)</span>
+            </div>
+            <div class="diag-arrow-h">──▶</div>
+            <div class="diag-node blue">
+              <span class="en">ReplicaSet</span>
+              <span class="he">שומר על 2 עותקים חיים (replicas: 2)</span>
+            </div>
+            <div class="diag-arrow-h">──▶</div>
+            <div class="diag-node emerald" style="border-width:2.5px;">
+              <span class="en">Pod (Container + /dev/shm)</span>
+              <span class="he">רץ על שרת GPU עם Toleration</span>
+            </div>
+          </div>
+
+          <div class="diag-arrow-v">▲ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ▲ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ▲</div>
+
+          <div class="diag-row">
+            <div class="diag-node amber">
+              <span class="en">Service (ClusterIP / Headless)</span>
+              <span class="he">מנתב תעבורה לפודים לפי Selector</span>
+            </div>
+            <div class="diag-node rose">
+              <span class="en">ConfigMap &amp; Secret</span>
+              <span class="he">מזריקים NCCL_DEBUG ומפתחות API</span>
+            </div>
+            <div class="diag-node blue">
+              <span class="en">PVC ──▶ StorageClass ──▶ PV</span>
+              <span class="he">אחסון משותף (RWX) ל-Checkpoints</span>
+            </div>
+          </div>
+        </div>
+      </div>
 
       <hr style="border:0; border-top:1px solid var(--border); margin:20px 0;">
 
@@ -480,19 +647,35 @@ flowchart TB
       <h2>חלק 3: מעבדי GPU ודרייברים של CUDA (בעולם ה-Linux וה-K8s)</h2>
       <p style="color:var(--muted);">כשמריצים עומסי GPU על Kubernetes, יש מספר שכבות תוכנה וחומרה שחייבות לעבוד יחד:</p>
 
-      <div class="mermaid-box">
-        <div class="mermaid">
-flowchart TD
-    APP["PyTorch / AI Container (CUDA Libraries)"]
-    NCT["NVIDIA Container Toolkit (nvidia-container-runtime)"]
-    K8S_DP["K8s NVIDIA Device Plugin (exposes nvidia.com/gpu)"]
-    DRIVER["Linux Host: NVIDIA Kernel Driver (nvidia.ko)"]
-    HW["Physical Hardware: NVIDIA H100 / A100 GPU"]
-
-    APP --&gt; NCT
-    K8S_DP --&gt; NCT
-    NCT --&gt; DRIVER
-    DRIVER --&gt; HW
+      <!-- DIAGRAM 3: GPU & CUDA SOFTWARE/HARDWARE STACK -->
+      <div class="diagram-card">
+        <div class="diagram-title">תרשים 3: שכבות התוכנה והחומרה בהרצת קונטיינר GPU על Kubernetes</div>
+        <div style="max-width: 680px; margin: 0 auto;">
+          <div class="diag-row">
+            <div class="diag-node blue" style="flex:1;">
+              <span class="en">PyTorch / AI Container (CUDA Libraries)</span>
+              <span class="he">בתוך ה-Image של הקונטיינר: libcudart, cuBLAS, cuDNN, NCCL</span>
+            </div>
+            <div class="diag-node purple" style="flex:1;">
+              <span class="en">K8s NVIDIA Device Plugin</span>
+              <span class="he">DaemonSet שחושף ל-Scheduler את המשאב nvidia.com/gpu</span>
+            </div>
+          </div>
+          <div class="diag-arrow-v">│ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; │<br>▼ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ▼</div>
+          <div class="diag-node amber" style="max-width:520px; margin:0 auto;">
+            <span class="en">NVIDIA Container Toolkit (nvidia-container-runtime)</span>
+            <span class="he">מזריק את קבצי החומרה (/dev/nvidia0, /dev/nvidiactl) מה-Host לקונטיינר</span>
+          </div>
+          <div class="diag-arrow-v">│<br>▼</div>
+          <div class="diag-node rose" style="max-width:520px; margin:0 auto;">
+            <span class="en">Linux Host: NVIDIA Kernel Driver (nvidia.ko)</span>
+            <span class="he">מותקן על מערכת ההפעלה המארחת (מפעיל את nvidia-smi וכותב שגיאות XID ל-dmesg)</span>
+          </div>
+          <div class="diag-arrow-v">│<br>▼</div>
+          <div class="diag-node emerald" style="max-width:520px; margin:0 auto; border-width:2.5px;">
+            <span class="en">Physical Hardware: NVIDIA H100 / A100 GPU</span>
+            <span class="he">הכרטיס הפיזי בשרת (מחובר ב-PCIe Gen5 וב-NVLink / NVSwitch)</span>
+          </div>
         </div>
       </div>
 
@@ -544,6 +727,35 @@ flowchart TD
         <li><em>(הערה: קיימת גם חלופה בשם <strong>RoCEv2</strong> – RDMA over Converged Ethernet, שמריצה פרוטוקול RDMA מעל רשתות Ethernet מהירות).</em></li>
       </ul>
 
+      <!-- DIAGRAM 4: GPUDIRECT RDMA VS TRADITIONAL TCP/IP -->
+      <div class="diagram-card">
+        <div class="diagram-title">תרשים 4: השוואת תעבורת רשת רגילה מול GPUDirect RDMA מעל InfiniBand</div>
+
+        <div class="diag-subgraph" style="border-color:#f43f5e; margin-bottom:14px;">
+          <div class="diag-subgraph-title" style="border-color:#f43f5e; color:#fda4af;">❌ רשת Ethernet רגילה (TCP/IP) – איטית ועמוסה ב-CPU</div>
+          <div class="diag-row">
+            <div class="diag-node rose"><span class="en">GPU VRAM</span><span class="he">זיכרון הכרטיס</span></div>
+            <div class="diag-arrow-h">──▶</div>
+            <div class="diag-node rose"><span class="en">System RAM</span><span class="he">העתקה לזיכרון השרת</span></div>
+            <div class="diag-arrow-h">──▶</div>
+            <div class="diag-node rose"><span class="en">CPU &amp; OS Kernel</span><span class="he">צוואר בקבוק (TCP Stack)</span></div>
+            <div class="diag-arrow-h">──▶</div>
+            <div class="diag-node rose"><span class="en">Standard NIC</span><span class="he">שיהוי גבוה</span></div>
+          </div>
+        </div>
+
+        <div class="diag-subgraph" style="border-color:#10b981;">
+          <div class="diag-subgraph-title" style="border-color:#10b981; color:#6ee7b7;">✅ GPUDirect RDMA + InfiniBand (400Gbps NDR) – עוקף CPU, קרנל ו-RAM!</div>
+          <div class="diag-row">
+            <div class="diag-node emerald"><span class="en">Node 1: GPU VRAM</span><span class="he">זיכרון H100 בשרת א'</span></div>
+            <div class="diag-arrow-h">◀═ PCIe/NVLink ═▶</div>
+            <div class="diag-node blue"><span class="en">ConnectX-7 HCA</span><span class="he">כרטיס InfiniBand</span></div>
+            <div class="diag-arrow-h">◀═ 400G IB ═▶</div>
+            <div class="diag-node emerald"><span class="en">Node 2: GPU VRAM</span><span class="he">זיכרון H100 בשרת ב'</span></div>
+          </div>
+        </div>
+      </div>
+
       <h3>2. מושגי יסוד וכלי CLI ב-InfiniBand</h3>
       <ul>
         <li><strong>כרטיס HCA (Host Channel Adapter):</strong> כרטיס הרשת של InfiniBand המותקן בשרת.</li>
@@ -594,6 +806,39 @@ flowchart TD
         <li><strong>מחיצה (Partition):</strong> תור עבודה לוגי (קבוצה של שרתים עם מאפיינים דומים או עדיפות מסוימת).</li>
         <li><strong>מנגנון GRES (Generic Resource Scheduling):</strong> המנגנון שבו SLURM מנהל משאבי חומרה מיוחדים כמו כרטיסי GPU (מוגדר בקובץ <code>gres.conf</code>, ונדרש באמצעות הדגל <code>--gres=gpu:8</code>).</li>
       </ul>
+
+      <!-- DIAGRAM 5: SLURM ARCHITECTURE -->
+      <div class="diagram-card">
+        <div class="diagram-title">תרשים 5: ארכיטקטורת SLURM לניהול תורים ואימוני GPU (Gang Scheduling)</div>
+        <div class="diag-subgraph" style="border-color:#a855f7;">
+          <div class="diag-row">
+            <div class="diag-node purple" style="min-width:210px;">
+              <span class="en">slurmctld (Controller)</span>
+              <span class="he">מנהל תורים (Partitions) ושיבוץ עבודות</span>
+            </div>
+            <div class="diag-arrow-h">◀──▶</div>
+            <div class="diag-node db" style="min-width:190px;">
+              <span class="en">slurmdbd (Accounting DB)</span>
+              <span class="he">היסטוריית עבודות (sacct) ומכסות</span>
+            </div>
+          </div>
+          <div class="diag-arrow-v">│<br>▼ Gang Scheduling (sbatch / srun --gres=gpu:8)</div>
+          <div class="diag-row">
+            <div class="diag-node emerald">
+              <span class="en">crusoe-h100-01 (slurmd)</span>
+              <span class="he">State: ALLOC (8x H100 GPUs)</span>
+            </div>
+            <div class="diag-node emerald">
+              <span class="en">crusoe-h100-02 (slurmd)</span>
+              <span class="he">State: ALLOC (8x H100 GPUs)</span>
+            </div>
+            <div class="diag-node rose">
+              <span class="en">crusoe-h100-04 (slurmd)</span>
+              <span class="he">State: DRAIN (NHC: Xid 79 fault)</span>
+            </div>
+          </div>
+        </div>
+      </div>
 
       <h3>2. פקודות SLURM קריטיות לראיון</h3>
       <table>
@@ -713,10 +958,10 @@ srun python train.py</pre>
     </div>
 
     <!-- ==========================================
-         נספח מעשי: 6 תקלות מעבדה ושאלות ראיון אינטראקטיביות
+         נספח מעשי: כרטיסיות תרגול לראיון
          ========================================== -->
     <div id="part-lab" class="card">
-      <h2>נספח מעשי: 6 תקלות המעבדה שפתרנו + כרטיסיות תרגול לראיון</h2>
+      <h2>נספח תרגול: שאלות ראיון אינטראקטיביות (לחץ על כל שאלה לחשיפת התשובה)</h2>
 
       <div class="subcard qa-box" onclick="this.classList.toggle('open')">
         <div style="display:flex; justify-content:space-between; align-items:center;">
