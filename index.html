@@ -3,7 +3,23 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+  <meta http-equiv="Pragma" content="no-cache">
+  <meta http-equiv="Expires" content="0">
   <title>מדריך הכנה לראיון בחברת Crusoe: לימוד Kubernetes, K9s, GPU/CUDA, InfiniBand ו-SLURM</title>
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+  <script>
+    document.addEventListener("DOMContentLoaded", function() {
+      if (window.mermaid) {
+        mermaid.initialize({
+          startOnLoad: true,
+          theme: 'dark',
+          securityLevel: 'loose',
+          flowchart: { useMaxWidth: true, htmlLabels: true, curve: 'basis' }
+        });
+      }
+    });
+  </script>
   <style>
     :root {
       --bg: #0f172a;
@@ -11,7 +27,7 @@
       --card-hover: #26354d;
       --border: #334155;
       --text: #f8fafc;
-      --muted: #cbd5e1;
+      --muted: #e2e8f0;
       --primary: #3b82f6;
       --primary-bg: rgba(59, 130, 246, 0.15);
       --emerald: #10b981;
@@ -25,6 +41,9 @@
     * {
       box-sizing: border-box;
     }
+    html {
+      scroll-behavior: smooth;
+    }
     html, body {
       direction: rtl;
       text-align: right;
@@ -33,7 +52,7 @@
       background-color: var(--bg);
       color: var(--text);
       font-family: system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-      line-height: 1.7;
+      line-height: 1.75;
     }
     .container {
       max-width: 1080px;
@@ -50,14 +69,14 @@
       box-shadow: 0 10px 30px rgba(0,0,0,0.25);
     }
     .hero h1 {
-      margin: 0 0 10px 0;
-      font-size: 1.7rem;
+      margin: 0 0 12px 0;
+      font-size: 1.75rem;
       color: #fff;
     }
     .hero p {
       margin: 0;
       color: var(--muted);
-      font-size: 0.96rem;
+      font-size: 1rem;
     }
     .nav-tabs {
       display: flex;
@@ -71,58 +90,51 @@
       background: #0f172a;
       color: var(--muted);
       border: 1px solid var(--border);
-      padding: 10px 15px;
+      padding: 9px 14px;
       border-radius: 10px;
       font-size: 0.88rem;
       font-weight: 700;
       cursor: pointer;
+      text-decoration: none;
+      display: inline-block;
       transition: all 0.2s;
     }
     .tab-btn:hover {
       background: var(--card-hover);
       color: #fff;
+      border-color: var(--primary);
     }
     .tab-btn.active {
       background: var(--primary);
       color: #fff;
       border-color: var(--primary);
     }
-    .section {
-      display: none;
-    }
-    .section.active {
-      display: block;
-    }
     .card {
       background: var(--card);
       border: 1px solid var(--border);
       border-radius: 14px;
-      padding: 22px;
-      margin-bottom: 20px;
+      padding: 24px;
+      margin-bottom: 24px;
+      scroll-margin-top: 20px;
     }
     .card h2 {
-      margin: 0 0 14px 0;
-      font-size: 1.35rem;
+      margin: 0 0 16px 0;
+      font-size: 1.4rem;
       color: #60a5fa;
       border-bottom: 2px solid var(--border);
-      padding-bottom: 8px;
+      padding-bottom: 10px;
     }
     .card h3 {
-      margin: 18px 0 8px 0;
-      font-size: 1.1rem;
+      margin: 22px 0 10px 0;
+      font-size: 1.15rem;
       color: #38bdf8;
-    }
-    .grid-2 {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-      gap: 14px;
     }
     .subcard {
       background: rgba(15, 23, 42, 0.65);
       border: 1px solid var(--border);
       border-radius: 10px;
-      padding: 16px;
-      margin-bottom: 12px;
+      padding: 18px;
+      margin-bottom: 14px;
     }
     ul, ol {
       margin: 8px 0;
@@ -130,11 +142,11 @@
       color: var(--muted);
     }
     ul ul, ol ul, ul ol {
-      margin: 4px 0;
-      padding-right: 20px;
+      margin: 5px 0;
+      padding-right: 22px;
     }
     li {
-      margin-bottom: 7px;
+      margin-bottom: 8px;
     }
     strong {
       color: #fff;
@@ -148,7 +160,7 @@
       padding: 1px 6px;
       border-radius: 5px;
       font-family: Consolas, Monaco, monospace;
-      font-size: 0.87em;
+      font-size: 0.88em;
       font-weight: 600;
     }
     pre {
@@ -161,16 +173,26 @@
       padding: 14px 16px;
       border-radius: 8px;
       font-family: Consolas, Monaco, monospace;
-      font-size: 0.84rem;
+      font-size: 0.86rem;
       overflow-x: auto;
-      margin: 10px 0;
-      line-height: 1.5;
+      margin: 12px 0;
+      line-height: 1.55;
+    }
+    .mermaid-box {
+      direction: ltr;
+      background: #090d16;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 20px;
+      margin: 16px 0;
+      text-align: center;
+      overflow-x: auto;
     }
     table {
       width: 100%;
       border-collapse: collapse;
       margin: 14px 0;
-      font-size: 0.9rem;
+      font-size: 0.92rem;
     }
     th, td {
       border: 1px solid var(--border);
@@ -184,54 +206,6 @@
     }
     tr:nth-child(even) td {
       background: rgba(15, 23, 42, 0.4);
-    }
-    .arch-diagram {
-      direction: ltr;
-      background: #090d16;
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 18px;
-      margin: 14px 0;
-      text-align: center;
-    }
-    .arch-row {
-      display: flex;
-      justify-content: center;
-      align-items: stretch;
-      gap: 16px;
-      flex-wrap: wrap;
-    }
-    .arch-box {
-      background: #1e293b;
-      border: 1px solid #475569;
-      border-radius: 10px;
-      padding: 14px;
-      min-width: 240px;
-      flex: 1;
-    }
-    .arch-box h4 {
-      margin: 0 0 10px 0;
-      color: #60a5fa;
-      font-size: 0.95rem;
-      border-bottom: 1px solid #334155;
-      padding-bottom: 6px;
-    }
-    .arch-pill {
-      display: block;
-      background: #0f172a;
-      border: 1px solid #3b82f6;
-      color: #e2e8f0;
-      padding: 7px 10px;
-      margin: 6px 0;
-      border-radius: 6px;
-      font-family: Consolas, monospace;
-      font-size: 0.82rem;
-    }
-    .arch-arrow {
-      color: #60a5fa;
-      font-size: 1.2rem;
-      margin: 4px 0;
-      font-weight: bold;
     }
     .badge {
       display: inline-block;
@@ -259,12 +233,11 @@
     }
     @media print {
       body { background: #fff; color: #000; }
-      .card, .subcard, .hero, .arch-diagram, .arch-box { background: #fff; border-color: #ccc; color: #000; box-shadow: none; }
-      .section { display: block !important; }
+      .card, .subcard, .hero, .mermaid-box { background: #fff; border-color: #ccc; color: #000; box-shadow: none; }
       .nav-tabs { display: none; }
       strong, h1, h2, h3, h4 { color: #000 !important; }
       ul, ol, p, td { color: #222 !important; }
-      code, .arch-pill { background: #eee; color: #000; border-color: #999; }
+      code { background: #eee; color: #000; border-color: #999; }
     }
   </style>
 </head>
@@ -272,364 +245,398 @@
   <div class="container">
     <div class="hero">
       <div style="display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:12px;">
-        <div style="max-width: 680px;">
-          <h1>מדריך הכנה לראיון בחברת Crusoe: לימוד Kubernetes, K9s, GPU/CUDA, InfiniBand ו-SLURM 🚀</h1>
+        <div style="max-width: 700px;">
+          <h1>מדריך הכנה לראיון בחברת Crusoe: לימוד Kubernetes, K9s, GPU/CUDA, InfiniBand ו-SLURM</h1>
           <p>חברת <strong>Crusoe</strong> בונה ומנהלת תשתיות ענן מבוססות GPU בקנה מידה עצום (AI Cloud / HPC) עבור אימון והרצה של מודלי AI. לכן, ראיונות בחברה מתמקדים בשילוב שבין <strong>ניהול קלאסטרים מודרני (Kubernetes)</strong> לבין <strong>תשתיות Bare-Metal ו-HPC עתירות ביצועים (GPUs, InfiniBand, SLURM)</strong>.</p>
         </div>
         <div style="display:flex; gap:8px; flex-wrap:wrap;">
-          <a href="Crusoe_Practical_Summary_RTL.pdf" download class="tab-btn" style="text-decoration:none; background:var(--emerald-bg); color:var(--emerald); border-color:var(--emerald);">📥 הורד סיכום מעשי (PDF)</a>
-          <a href="Crusoe_Full_Study_Guide_RTL.pdf" download class="tab-btn" style="text-decoration:none; background:var(--primary-bg); color:#93c5fd; border-color:var(--primary);">📘 הורד מדריך מלא (PDF)</a>
+          <a href="Crusoe_Full_Study_Guide_RTL.pdf" download class="tab-btn" style="background:var(--primary-bg); color:#93c5fd; border-color:var(--primary);">📘 הורד מדריך מלא (PDF)</a>
+          <a href="Crusoe_Practical_Summary_RTL.pdf" download class="tab-btn" style="background:var(--emerald-bg); color:var(--emerald); border-color:var(--emerald);">📥 הורד סיכום מעשי (PDF)</a>
           <button onclick="window.print()" class="tab-btn">🖨️ הדפסה</button>
         </div>
       </div>
 
       <div class="nav-tabs">
-        <button class="tab-btn active" onclick="openTab('tab-full-guide', this)">📘 המדריך המלא (חלקים 1-6)</button>
-        <button class="tab-btn" onclick="openTab('tab-k9s', this)">⌨️ טבלת פקודות K9s &amp; kubectl</button>
-        <button class="tab-btn" onclick="openTab('tab-k8s-bugs', this)">🛠️ מעבדת K8s: 6 התקלות שפתרנו</button>
-        <button class="tab-btn" onclick="openTab('tab-quiz', this)">🎤 סימולטור שאלות ראיון (Flashcards)</button>
+        <a href="#part-1" class="tab-btn active">חלק 1: ליבת Kubernetes</a>
+        <a href="#part-2" class="tab-btn">חלק 2: עבודה מהירה עם K9s</a>
+        <a href="#part-3" class="tab-btn">חלק 3: מעבדי GPU ו-CUDA</a>
+        <a href="#part-4" class="tab-btn">חלק 4: רשתות InfiniBand ו-RDMA</a>
+        <a href="#part-5" class="tab-btn">חלק 5: מערכת התזמון SLURM</a>
+        <a href="#part-6" class="tab-btn">חלק 6: תרחישי תקלות ושאלות ראיון</a>
+        <a href="#part-lab" class="tab-btn" style="border-color:var(--emerald); color:#6ee7b7;">🛠️ תרגול מעבדה ושאלות חזרה</a>
       </div>
     </div>
 
-    <!-- TAB 1: FULL UNABRIDGED STUDY GUIDE (PARTS 1 TO 6) -->
-    <div id="tab-full-guide" class="section active">
+    <!-- ==========================================
+         חלק 1: ליבת Kubernetes (או K8s)
+         ========================================== -->
+    <div id="part-1" class="card">
+      <h2>חלק 1: ליבת Kubernetes (או K8s)</h2>
 
-      <!-- PART 1 -->
-      <div class="card">
-        <h2>חלק 1: ליבת Kubernetes (או K8s)</h2>
+      <h3>1. ארכיטקטורת הקלאסטר (Clusters, Contexts &amp; Namespaces)</h3>
+      <ul>
+        <li><strong>קלאסטר (Cluster):</strong> אוסף של מכונות (Nodes) המריצות יישומים בקונטיינרים. הקלאסטר מתחלק לשני חלקים עיקריים:
+          <ul>
+            <li><strong>שכבת הניהול (Control Plane / Master):</strong> אחראית על ניהול הקלאסטר וכוללת את:
+              <ul>
+                <li>הרכיב <code>kube-apiserver</code>: שער הכניסה לכל הפקודות (REST API).</li>
+                <li>מסד הנתונים <code>etcd</code>: שומר (Key-Value) את כל המצב (State) של הקלאסטר.</li>
+                <li>המתזמן <code>kube-scheduler</code>: מחליט על איזה שרת (Node) ישובץ כל Pod (לפי זמינות CPU, זיכרון RAM, וכרטיסי <strong>GPU</strong>).</li>
+                <li>בקר הניהול <code>kube-controller-manager</code>: דואג שהמצב הקיים (Actual State) יתאים למצב הרצוי (Desired State).</li>
+              </ul>
+            </li>
+            <li><strong>שרתי העבודה (Worker Nodes):</strong> השרתים הפיזיים או הווירטואליים שמריצים את העומסים (ב-Crusoe אלו לרוב שרתי GPU עוצמתיים עם כרטיסי H100/H200/B200). על כל שרת כזה רצים:
+              <ul>
+                <li>הסוכן <code>kubelet</code>: מדבר עם ה-API Server ודואג שהקונטיינרים ב-Pod ירוצו בפועל.</li>
+                <li>מנוע הריצה (<code>Container Runtime</code>): התוכנה שמריצה קונטיינרים (לרוב <code>containerd</code>).</li>
+                <li>רכיב הרשת <code>kube-proxy</code>: מנהל את חוקי הרשת (iptables / IPVS) להעברת תעבורה אל ה-Services.</li>
+              </ul>
+            </li>
+          </ul>
+        </li>
+      </ul>
 
-        <h3>1. ארכיטקטורת הקלאסטר (Clusters, Contexts &amp; Namespaces)</h3>
-        <ul>
-          <li><strong>קלאסטר (Cluster):</strong> אוסף של מכונות (Nodes) המריצות יישומים בקונטיינרים. הקלאסטר מתחלק לשני חלקים עיקריים:
-            <ul>
-              <li><strong>שכבת הניהול (Control Plane / Master):</strong> אחראית על ניהול הקלאסטר וכוללת את:
-                <ul>
-                  <li>הרכיב <code>kube-apiserver</code>: שער הכניסה לכל הפקודות (REST API).</li>
-                  <li>מסד הנתונים <code>etcd</code>: שומר (Key-Value) את כל המצב (State) של הקלאסטר.</li>
-                  <li>המתזמן <code>kube-scheduler</code>: מחליט על איזה שרת (Node) ישובץ כל Pod (לפי זמינות CPU, זיכרון RAM, וכרטיסי <strong>GPU</strong>).</li>
-                  <li>בקר הניהול <code>kube-controller-manager</code>: דואג שהמצב הקיים (Actual State) יתאים למצב הרצוי (Desired State).</li>
-                </ul>
-              </li>
-              <li><strong>שרתי העבודה (Worker Nodes):</strong> השרתים הפיזיים או הווירטואליים שמריצים את העומסים (ב-Crusoe אלו לרוב שרתי GPU עוצמתיים עם כרטיסי H100/H200/B200). על כל שרת כזה רצים:
-                <ul>
-                  <li>הסוכן <code>kubelet</code>: מדבר עם ה-API Server ודואג שהקונטיינרים ב-Pod ירוצו בפועל.</li>
-                  <li>מנוע הריצה (<code>Container Runtime</code>): התוכנה שמריצה קונטיינרים (לרוב <code>containerd</code>).</li>
-                  <li>רכיב הרשת <code>kube-proxy</code>: מנהל את חוקי הרשת (iptables / IPVS) להעברת תעבורה אל ה-Services.</li>
-                </ul>
-              </li>
-            </ul>
-          </li>
-        </ul>
+      <div class="mermaid-box">
+        <div class="mermaid">
+flowchart TB
+    subgraph ControlPlane["Control Plane"]
+        API["kube-apiserver"]
+        ETCD[("etcd")]
+        SCHED["kube-scheduler"]
+        CM["controller-manager"]
+        API &lt;--&gt; ETCD
+        SCHED --&gt; API
+        CM --&gt; API
+    end
 
-        <!-- Architecture Diagram 1 -->
-        <div class="arch-diagram">
-          <div class="arch-row">
-            <div class="arch-box">
-              <h4>Control Plane (Master)</h4>
-              <span class="arch-pill">kube-apiserver (REST API)</span>
-              <span class="arch-pill">etcd (Cluster State Key-Value DB)</span>
-              <span class="arch-pill">kube-scheduler (GPU / Node Placement)</span>
-              <span class="arch-pill">kube-controller-manager</span>
-            </div>
-            <div class="arch-box">
-              <h4>GPU Worker Node</h4>
-              <span class="arch-pill">kubelet (Node Agent) &amp; kube-proxy</span>
-              <div class="arch-arrow">↓</div>
-              <span class="arch-pill">containerd + nvidia-container-toolkit</span>
-              <div class="arch-arrow">↓</div>
-              <span class="arch-pill" style="border-color:#10b981; color:#6ee7b7;">Pod (GPU AI Training / Inference App)</span>
-            </div>
-          </div>
+    subgraph WorkerNode["GPU Worker Node"]
+        KUBELET["kubelet"]
+        PROXY["kube-proxy"]
+        RUNTIME["containerd + nvidia-container-toolkit"]
+        POD1["Pod (GPU App)"]
+        KUBELET --&gt; RUNTIME
+        RUNTIME --&gt; POD1
+    end
+
+    API &lt;--&gt; KUBELET
+    API &lt;--&gt; PROXY
         </div>
-
-        <ul>
-          <li><strong>קונטקסט (Context):</strong> הגדרה בקובץ הקונפיגורציה <code>kubeconfig</code> (בנתיב <code>~/.kube/config</code>) שמחברת בין שלושה דברים: <strong>Cluster</strong> (לאיזה שרת מתחברים), <strong>User</strong> (עם אילו הרשאות), ו-<strong>Namespace</strong> ברירת מחדל.
-            <ul>
-              <li>פקודות שימושיות:
-                <ul>
-                  <li>הפקודה <code>kubectl config get-contexts</code> – הצגת כל הקונטקסטים הקיימים.</li>
-                  <li>הפקודה <code>kubectl config use-context &lt;context-name&gt;</code> – מעבר מהיר בין קלאסטרים (למשל בין סביבת Staging ל-Prod).</li>
-                </ul>
-              </li>
-            </ul>
-          </li>
-          <li><strong>מרחב שמות (Namespace):</strong> חלוקה לוגית (וירטואלית) של קלאסטר פיזי אחד למספר סביבות מבודדות.
-            <ul>
-              <li>משמש להפרדה בין צוותים או לקוחות (Multi-tenancy), הגבלת משאבים באמצעות <code>ResourceQuota</code> (למשל הגבלת צוות ל-16 כרטיסי GPU), וניהול הרשאות (<code>RBAC</code>).</li>
-              <li>משאבים מסוימים הם <strong>תלויי Namespace</strong> (כמו <code>Pod</code>, <code>Deployment</code>, <code>Service</code>, <code>Secret</code>, <code>PVC</code>), בעוד משאבים אחרים הם <strong>ברמת הקלאסטר כולו (Cluster-scoped)</strong> (כמו <code>Node</code>, <code>PersistentVolume</code>, <code>StorageClass</code>, <code>Namespace</code>).</li>
-            </ul>
-          </li>
-        </ul>
-
-        <h3>2. מהקונטיינר ועד ה-Deployment (היררכיית Containers, Pods, Replications, Deployments)</h3>
-        <ul>
-          <li><strong>קונטיינר (Container):</strong> תהליך מבודד על מערכת ההפעלה לינוקס (באמצעות Linux Namespaces לבידוד הראייה ו-cgroups להגבלת משאבים) שרץ מתוך Image קבוע.</li>
-          <li><strong>פוד (Pod):</strong> יחידת העבודה הקטנה ביותר ב-K8s. הפוד עוטף קונטיינר אחד (או יותר, למשל במודל <em>Sidecar</em> או <em>Init Container</em>).
-            <ul>
-              <li>כל הקונטיינרים באותו Pod <strong>חולקים את אותה כתובת IP</strong> (<code>localhost</code>) ואותם דיסקים (Volumes).</li>
-              <li>פוד הוא זמני (Ephemeral) – אם הוא קורס או נמחק, הוא לא קם מחדש עם אותה כתובת IP; לכן כמעט אף פעם לא יוצרים Pod ישירות, אלא דרך בקר (Controller).</li>
-            </ul>
-          </li>
-          <li><strong>שכפול ויתירות (Replication / ReplicaSet):</strong> האובייקט שאחראי לוודא שמספר מדויק של עותקים (<code>replicas</code>) של Pod מסוים רץ בכל רגע נתון (מזהה אותם לפי <code>label selector</code>). אם שרת נופל, ה-ReplicaSet יזהה שחסר Pod וייצור מיד עותק חדש על שרת אחר.</li>
-          <li><strong>פריסה (Deployment):</strong> שכבת הניהול שמעל ה-ReplicaSet.
-            <ul>
-              <li>מאפשרת עדכוני גרסה הדרגתיים (<strong>Rolling Updates</strong>) ללא השבתה (Zero Downtime) וחזרה אחורה לגרסה קודמת (<strong>Rollbacks</strong>) במקרה של תקלה (<code>kubectl rollout undo deployment/&lt;name&gt;</code>).</li>
-              <li>כשמשנים גרסת Image ב-Deployment, הוא יוצר ReplicaSet חדש, מעלה בו פודים בהדרגה, ומוריד פודים מה-ReplicaSet הישן.</li>
-            </ul>
-          </li>
-          <li><strong>בונוס חשוב לראיון ב-Crusoe – בקרי DaemonSet ו-Job:</strong>
-            <ul>
-              <li><strong>בקר DaemonSet:</strong> מוודא שעותק אחד בדיוק של Pod רץ על <strong>כל שרת (Node)</strong> בקלאסטר (או על כל שרת עם Label מסוים, כמו שרתי GPU). קריטי ב-Crusoe להרצת דרייברים של NVIDIA, כלי ניטור (<code>dcgm-exporter</code>), ותוספי רשת (InfiniBand).</li>
-              <li><strong>בקר Job / PyTorchJob:</strong> אימוני AI לא רצים כ-Deployment אינסופי אלא כמשימת חישוב שצריכה לרוץ ולהסתיים בהצלחה (<code>Job</code>).</li>
-            </ul>
-          </li>
-        </ul>
-
-        <h3>3. תקשורת ורשת (Services)</h3>
-        <p style="color:var(--muted);">מכיוון שפודים עולים ויורדים ומחליפים כתובות IP, האובייקט <strong>Service</strong> מספק כתובת IP קבועה (Virtual IP) ושם DNS קבוע (<code>&lt;svc-name&gt;.&lt;namespace&gt;.svc.cluster.local</code>), ומבצע חלוקת עומסים (Load Balancing) בין הפודים התואמים ל-Selector שלו.</p>
-        <table>
-          <thead>
-            <tr>
-              <th>סוג ה-Service</th>
-              <th>תפקיד ושימוש בקלאסטר</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td><strong>שירות ClusterIP</strong> (ברירת מחדל)</td>
-              <td>חושף את השירות <strong>רק בתוך הקלאסטר</strong> באמצעות IP פנימי. מתאים לתקשורת בין שירותים פנימיים.</td>
-            </tr>
-            <tr>
-              <td><strong>שירות NodePort</strong></td>
-              <td>פותח פורט סטטי (בטווח <code>30000-32767</code>) על ה-IP של <strong>כל שרת (Node)</strong> בקלאסטר ומנתב ממנו ל-Service.</td>
-            </tr>
-            <tr>
-              <td><strong>שירות LoadBalancer</strong></td>
-              <td>מבקש מספק הענן (כמו Crusoe Cloud) להקצות מאזן עומסים חיצוני עם IP ציבורי שמנתב תעבורה לשרתים.</td>
-            </tr>
-            <tr>
-              <td><strong>שירות Headless Service</strong> (<code>clusterIP: None</code>)</td>
-              <td><strong>קריטי ל-AI ו-HPC!</strong> לא מקצה IP וירטואלי יחיד, אלא מחזיר ב-DNS את רשימת כתובות ה-IP הישירות של כל הפודים. משמש לאימון מבוזר (Distributed Training) שבו כל שרת GPU חייב לדבר ישירות עם השרתים האחרים.</td>
-            </tr>
-          </tbody>
-        </table>
-
-        <h3>4. קונפיגורציה ומידע רגיש (Secrets &amp; ConfigMaps)</h3>
-        <ul>
-          <li><strong>אובייקט ConfigMap:</strong> משמש לשמירת הגדרות לא רגישות (קבצי קונפיגורציה, משתני סביבה כמו <code>NCCL_DEBUG=INFO</code>).</li>
-          <li><strong>אובייקט Secret:</strong> משמש לשמירת מידע רגיש (סיסמאות, מפתחות API, תעודות TLS, או <code>imagePullSecrets</code> למשיכת Images מרג'יסטרי פרטי).
-            <ul>
-              <li><strong>חשוב לזכור לראיון:</strong> בברירת מחדל, Secrets נשמרים בקובץ ה-YAML בפורמט <strong>Base64</strong> (שזה <strong>קידוד ולא הצפנה!</strong> כל מי שיש לו גישה יכול לפענח עם <code>base64 -d</code>). כדי לאבטח אותם באמת:
-                <ol>
-                  <li>מפעילים הצפנה בדיסק (<strong>Encryption at Rest</strong>) עבור מסד הנתונים <code>etcd</code>.</li>
-                  <li>מגבילים גישה למשאב באמצעות הרשאות <strong>RBAC</strong>.</li>
-                  <li>משתמשים בכלים חיצוניים כמו <strong>External Secrets Operator</strong> או <strong>HashiCorp Vault</strong>.</li>
-                </ol>
-              </li>
-              <li>ניתן להזריק Secret לתוך Pod כמשתני סביבה (<code>envFrom</code> / <code>valueFrom</code>) או כקובץ ממופה (<code>Volume Mount</code> – בטוח יותר ומאפשר עדכון דינמי של הקובץ כשה-Secret מתעדכן).</li>
-            </ul>
-          </li>
-        </ul>
-
-        <h3>5. אחסון (Storage: PV, PVC, StorageClass, CSI)</h3>
-        <p style="color:var(--muted);">קונטיינרים הם זמניים (Stateless) – כל מה שנכתב לדיסק המקומי שלהם נמחק כשהפוד מוחלף. כדי לשמור מידע קבוע (כמו Datasets ענקיים או Checkpoints של אימון מודלים) משתמשים בשלושה רכיבים:</p>
-        <ol>
-          <li><strong>נפח אחסון (PersistentVolume - PV):</strong> משאב אחסון פיזי בקלאסטר (דיסק בענן, שרת NFS, או מערכת קבצים מקבילית מהירה כמו Lustre / WEKA / VAST שנפוצות מאוד ב-Crusoe). זהו משאב ברמת הקלאסטר.</li>
-          <li><strong>בקשת אחסון (PersistentVolumeClaim - PVC):</strong> "בקשה" של מפתח או פוד לקבלת אחסון (למשל: "אני מבקש 500GB"). הפוד מתחבר אל ה-PVC.</li>
-          <li><strong>מחלקת אחסון (StorageClass - SC):</strong> מגדירה "פרופיל" אחסון ומאפשרת הקצאה אוטומטית (<strong>Dynamic Provisioning</strong>) – ברגע שנוצר PVC, ה-StorageClass יוצר אוטומטית את ה-PV המתאים מאחורי הקלעים דרך דרייבר <strong>CSI (Container Storage Interface)</strong>.</li>
-        </ol>
-        <p><strong>מצבי גישה לאחסון (Access Modes) – שאלת ראיון קלאסית:</strong></p>
-        <ul>
-          <li>מצב <code>ReadWriteOnce (RWO)</code>: הדיסק יכול להתחבר לקריאה וכתיבה <strong>לשרת (Node) אחד בלבד</strong> בכל רגע (אופייני ל-Block Storage כמו דיסק SSD בודד).</li>
-          <li>מצב <code>ReadOnlyMany (ROX)</code>: מספר שרתים יכולים לקרוא ממנו במקביל (ללא כתיבה).</li>
-          <li>מצב <code>ReadWriteMany (RWX)</code>: <strong>קריטי בעולמות AI ו-GPU!</strong> מספר רב של שרתים יכולים לקרוא ולכתוב לאותו אחסון במקביל (Shared Filesystem). הכרחי כשמאות כרטיסי GPU על עשרות שרתים קוראים את אותו Dataset ושומרים Checkpoints לאותה תיקייה משותפת.</li>
-        </ul>
       </div>
 
-      <!-- PART 2 -->
-      <div class="card">
-        <h2>חלק 2: עבודה מהירה עם K9s</h2>
-        <p style="color:var(--muted);">הכלי <strong>K9s</strong> הוא ממשק טרמינל אינטראקטיבי (Terminal UI) לניהול וניטור קלאסטרים של K8s בזמן אמת, שחוסך הקלדה של פקודות <code>kubectl</code> ארוכות.</p>
-        <h3>קיצורי דרך ופקודות חובה ב-K9s:</h3>
-        <ul>
-          <li><strong>ניווט בין משאבים (כניסה למצב פקודה עם נקודתיים <code>:</code>):</strong>
-            <ul>
-              <li>הפקודה <code>:pods</code> (או <code>:po</code>) – מעבר לתצוגת הפודים.</li>
-              <li>הפקודה <code>:deploy</code> (או <code>:dp</code>) – מעבר לתצוגת ה-Deployments.</li>
-              <li>הפקודה <code>:svc</code> – מעבר לתצוגת ה-Services.</li>
-              <li>הפקודה <code>:nodes</code> (או <code>:no</code>) – צפייה בשרתים (Nodes) ובניצולת המשאבים שלהם.</li>
-              <li>הפקודה <code>:ctx</code> – מעבר מהיר בין Contexts (קלאסטרים שונים).</li>
-              <li>הפקודה <code>:ns</code> – מעבר מהיר בין Namespaces (או לחיצה על המקש <code>0</code> כדי לראות את <strong>כל</strong> ה-Namespaces יחד).</li>
-              <li>הפקודה <code>:xray pod</code> – תצוגת עץ שמראה את הקשרים בין Deployment, ReplicaSet, Pod, Secrets ו-PVC.</li>
-              <li>הפקודה <code>:pulses</code> – לוח בקרה לבריאות כללית של הקלאסטר.</li>
-            </ul>
-          </li>
-          <li><strong>פעולות על משאב מסומן (למשל כשעומדים על Pod):</strong>
-            <ul>
-              <li>מקש <code>d</code> – פקודת <strong>Describe</strong> (שקול ל-<code>kubectl describe</code> – המקום הראשון שבודקים כשפוד תקוע ב-<code>Pending</code> או <code>ContainerCreating</code> כדי לראות את טבלת ה-<strong>Events</strong> בתחתית).</li>
-              <li>מקש <code>l</code> – צפייה ב-<strong>Logs</strong> בזמן אמת (לחיצה על <code>p</code> תציג לוגים של הקונטיינר הקודם שקרס!).</li>
-              <li>מקש <code>s</code> – פתיחת <strong>Shell</strong> (טרמינל אינטראקטיבי <code>exec -it</code> לתוך הקונטיינר).</li>
-              <li>מקש <code>y</code> – צפייה בקובץ ה-<strong>YAML</strong> המלא של המשאב.</li>
-              <li>מקש <code>e</code> – עריכת <strong>Edit</strong> של ה-YAML בזמן אמת (שקול ל-<code>kubectl edit</code>).</li>
-              <li>צירוף <code>Ctrl + d</code> – מחיקת המשאב (Delete).</li>
-              <li>צירוף <code>Ctrl + k</code> – הריגה מיידית של פוד תקוע (Kill / Force Delete עם <code>grace-period=0</code>).</li>
-              <li>צירוף <code>Shift + f</code> – ביצוע <strong>Port-Forward</strong> מהמחשב המקומי אל הפוד או ה-Service.</li>
-              <li>מקש <code>/</code> – סינון וחיפוש טקסטואלי ברשימה (למשל <code>/error</code> או שם של פוד).</li>
-            </ul>
-          </li>
-        </ul>
+      <ul>
+        <li><strong>קונטקסט (Context):</strong> הגדרה בקובץ הקונפיגורציה <code>kubeconfig</code> (בנתיב <code>~/.kube/config</code>) שמחברת בין שלושה דברים: <strong>Cluster</strong> (לאיזה שרת מתחברים), <strong>User</strong> (עם אילו הרשאות), ו-<strong>Namespace</strong> ברירת מחדל.
+          <ul>
+            <li>פקודות שימושיות:
+              <ul>
+                <li>הפקודה <code>kubectl config get-contexts</code> – הצגת כל הקונטקסטים הקיימים.</li>
+                <li>הפקודה <code>kubectl config use-context &lt;context-name&gt;</code> – מעבר מהיר בין קלאסטרים (למשל בין סביבת Staging ל-Prod).</li>
+              </ul>
+            </li>
+          </ul>
+        </li>
+        <li><strong>מרחב שמות (Namespace):</strong> חלוקה לוגית (וירטואלית) של קלאסטר פיזי אחד למספר סביבות מבודדות.
+          <ul>
+            <li>משמש להפרדה בין צוותים או לקוחות (Multi-tenancy), הגבלת משאבים באמצעות <code>ResourceQuota</code> (למשל הגבלת צוות ל-16 כרטיסי GPU), וניהול הרשאות (<code>RBAC</code>).</li>
+            <li>משאבים מסוימים הם <strong>תלויי Namespace</strong> (כמו <code>Pod</code>, <code>Deployment</code>, <code>Service</code>, <code>Secret</code>, <code>PVC</code>), בעוד משאבים אחרים הם <strong>ברמת הקלאסטר כולו (Cluster-scoped)</strong> (כמו <code>Node</code>, <code>PersistentVolume</code>, <code>StorageClass</code>, <code>Namespace</code>).</li>
+          </ul>
+        </li>
+      </ul>
+
+      <hr style="border:0; border-top:1px solid var(--border); margin:20px 0;">
+
+      <h3>2. מהקונטיינר ועד ה-Deployment (היררכיית Containers, Pods, Replications, Deployments)</h3>
+      <ul>
+        <li><strong>קונטיינר (Container):</strong> תהליך מבודד על מערכת ההפעלה לינוקס (באמצעות Linux Namespaces לבידוד הראייה ו-cgroups להגבלת משאבים) שרץ מתוך Image קבוע.</li>
+        <li><strong>פוד (Pod):</strong> יחידת העבודה הקטנה ביותר ב-K8s. הפוד עוטף קונטיינר אחד (או יותר, למשל במודל <em>Sidecar</em> או <em>Init Container</em>).
+          <ul>
+            <li>כל הקונטיינרים באותו Pod <strong>חולקים את אותה כתובת IP</strong> (<code>localhost</code>) ואותם דיסקים (Volumes).</li>
+            <li>פוד הוא זמני (Ephemeral) – אם הוא קורס או נמחק, הוא לא קם מחדש עם אותה כתובת IP; לכן כמעט אף פעם לא יוצרים Pod ישירות, אלא דרך בקר (Controller).</li>
+          </ul>
+        </li>
+        <li><strong>שכפול ויתירות (Replication / ReplicaSet):</strong> האובייקט שאחראי לוודא שמספר מדויק של עותקים (<code>replicas</code>) של Pod מסוים רץ בכל רגע נתון (מזהה אותם לפי <code>label selector</code>). אם שרת נופל, ה-ReplicaSet יזהה שחסר Pod וייצור מיד עותק חדש על שרת אחר.</li>
+        <li><strong>פריסה (Deployment):</strong> שכבת הניהול שמעל ה-ReplicaSet.
+          <ul>
+            <li>מאפשרת עדכוני גרסה הדרגתיים (<strong>Rolling Updates</strong>) ללא השבתה (Zero Downtime) וחזרה אחורה לגרסה קודמת (<strong>Rollbacks</strong>) במקרה של תקלה (<code>kubectl rollout undo deployment/&lt;name&gt;</code>).</li>
+            <li>כשמשנים גרסת Image ב-Deployment, הוא יוצר ReplicaSet חדש, מעלה בו פודים בהדרגה, ומוריד פודים מה-ReplicaSet הישן.</li>
+          </ul>
+        </li>
+        <li><strong>בונוס חשוב לראיון ב-Crusoe – בקרי DaemonSet ו-Job:</strong>
+          <ul>
+            <li><strong>בקר DaemonSet:</strong> מוודא שעותק אחד בדיוק של Pod רץ על <strong>כל שרת (Node)</strong> בקלאסטר (או על כל שרת עם Label מסוים, כמו שרתי GPU). קריטי ב-Crusoe להרצת דרייברים של NVIDIA, כלי ניטור (<code>dcgm-exporter</code>), ותוספי רשת (InfiniBand).</li>
+            <li><strong>בקר Job / PyTorchJob:</strong> אימוני AI לא רצים כ-Deployment אינסופי אלא כמשימת חישוב שצריכה לרוץ ולהסתיים בהצלחה (<code>Job</code>).</li>
+          </ul>
+        </li>
+      </ul>
+
+      <hr style="border:0; border-top:1px solid var(--border); margin:20px 0;">
+
+      <h3>3. תקשורת ורשת (Services)</h3>
+      <p style="color:var(--muted);">מכיוון שפודים עולים ויורדים ומחליפים כתובות IP, האובייקט <strong>Service</strong> מספק כתובת IP קבועה (Virtual IP) ושם DNS קבוע (<code>&lt;svc-name&gt;.&lt;namespace&gt;.svc.cluster.local</code>), ומבצע חלוקת עומסים (Load Balancing) בין הפודים התואמים ל-Selector שלו.</p>
+
+      <table>
+        <thead>
+          <tr>
+            <th>סוג ה-Service</th>
+            <th>תפקיד ושימוש בקלאסטר</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>שירות ClusterIP</strong> (ברירת מחדל)</td>
+            <td>חושף את השירות <strong>רק בתוך הקלאסטר</strong> באמצעות IP פנימי. מתאים לתקשורת בין שירותים פנימיים.</td>
+          </tr>
+          <tr>
+            <td><strong>שירות NodePort</strong></td>
+            <td>פותח פורט סטטי (בטווח <code>30000-32767</code>) על ה-IP של <strong>כל שרת (Node)</strong> בקלאסטר ומנתב ממנו ל-Service.</td>
+          </tr>
+          <tr>
+            <td><strong>שירות LoadBalancer</strong></td>
+            <td>מבקש מספק הענן (כמו Crusoe Cloud) להקצות מאזן עומסים חיצוני עם IP ציבורי שמנתב תעבורה לשרתים.</td>
+          </tr>
+          <tr>
+            <td><strong>שירות Headless Service</strong> (<code>clusterIP: None</code>)</td>
+            <td><strong>קריטי ל-AI ו-HPC!</strong> לא מקצה IP וירטואלי יחיד, אלא מחזיר ב-DNS את רשימת כתובות ה-IP הישירות של כל הפודים. משמש לאימון מבוזר (Distributed Training) שבו כל שרת GPU חייב לדבר ישירות עם השרתים האחרים.</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <hr style="border:0; border-top:1px solid var(--border); margin:20px 0;">
+
+      <h3>4. קונפיגורציה ומידע רגיש (Secrets &amp; ConfigMaps)</h3>
+      <ul>
+        <li><strong>אובייקט ConfigMap:</strong> משמש לשמירת הגדרות לא רגישות (קבצי קונפיגורציה, משתני סביבה כמו <code>NCCL_DEBUG=INFO</code>).</li>
+        <li><strong>אובייקט Secret:</strong> משמש לשמירת מידע רגיש (סיסמאות, מפתחות API, תעודות TLS, או <code>imagePullSecrets</code> למשיכת Images מרג'יסטרי פרטי).
+          <ul>
+            <li><strong>חשוב לזכור לראיון:</strong> בברירת מחדל, Secrets נשמרים בקובץ ה-YAML בפורמט <strong>Base64</strong> (שזה <strong>קידוד ולא הצפנה!</strong> כל מי שיש לו גישה יכול לפענח עם <code>base64 -d</code>). כדי לאבטח אותם באמת:
+              <ol>
+                <li>מפעילים הצפנה בדיסק (<strong>Encryption at Rest</strong>) עבור מסד הנתונים <code>etcd</code>.</li>
+                <li>מגבילים גישה למשאב באמצעות הרשאות <strong>RBAC</strong>.</li>
+                <li>משתמשים בכלים חיצוניים כמו <strong>External Secrets Operator</strong> או <strong>HashiCorp Vault</strong>.</li>
+              </ol>
+            </li>
+            <li>ניתן להזריק Secret לתוך Pod כמשתני סביבה (<code>envFrom</code> / <code>valueFrom</code>) או כקובץ ממופה (<code>Volume Mount</code> – בטוח יותר ומאפשר עדכון דינמי של הקובץ כשה-Secret מתעדכן).</li>
+          </ul>
+        </li>
+      </ul>
+
+      <hr style="border:0; border-top:1px solid var(--border); margin:20px 0;">
+
+      <h3>5. אחסון (Storage: PV, PVC, StorageClass, CSI)</h3>
+      <p style="color:var(--muted);">קונטיינרים הם זמניים (Stateless) – כל מה שנכתב לדיסק המקומי שלהם נמחק כשהפוד מוחלף. כדי לשמור מידע קבוע (כמו Datasets ענקיים או Checkpoints של אימון מודלים) משתמשים בשלושה רכיבים:</p>
+      <ol>
+        <li><strong>נפח אחסון (PersistentVolume - PV):</strong> משאב אחסון פיזי בקלאסטר (דיסק בענן, שרת NFS, או מערכת קבצים מקבילית מהירה כמו Lustre / WEKA / VAST שנפוצות מאוד ב-Crusoe). זהו משאב ברמת הקלאסטר.</li>
+        <li><strong>בקשת אחסון (PersistentVolumeClaim - PVC):</strong> "בקשה" של מפתח או פוד לקבלת אחסון (למשל: "אני מבקש 500GB"). הפוד מתחבר אל ה-PVC.</li>
+        <li><strong>מחלקת אחסון (StorageClass - SC):</strong> מגדירה "פרופיל" אחסון ומאפשרת הקצאה אוטומטית (<strong>Dynamic Provisioning</strong>) – ברגע שנוצר PVC, ה-StorageClass יוצר אוטומטית את ה-PV המתאים מאחורי הקלעים דרך דרייבר <strong>CSI (Container Storage Interface)</strong>.</li>
+      </ol>
+      <p><strong>מצבי גישה לאחסון (Access Modes) – שאלת ראיון קלאסית:</strong></p>
+      <ul>
+        <li>מצב <code>ReadWriteOnce (RWO)</code>: הדיסק יכול להתחבר לקריאה וכתיבה <strong>לשרת (Node) אחד בלבד</strong> בכל רגע (אופייני ל-Block Storage כמו דיסק SSD בודד).</li>
+        <li>מצב <code>ReadOnlyMany (ROX)</code>: מספר שרתים יכולים לקרוא ממנו במקביל (ללא כתיבה).</li>
+        <li>מצב <code>ReadWriteMany (RWX)</code>: <strong>קריטי בעולמות AI ו-GPU!</strong> מספר רב של שרתים יכולים לקרוא ולכתוב לאותו אחסון במקביל (Shared Filesystem). הכרחי כשמאות כרטיסי GPU על עשרות שרתים קוראים את אותו Dataset ושומרים Checkpoints לאותה תיקייה משותפת.</li>
+      </ul>
+    </div>
+
+    <!-- ==========================================
+         חלק 2: עבודה מהירה עם K9s
+         ========================================== -->
+    <div id="part-2" class="card">
+      <h2>חלק 2: עבודה מהירה עם K9s</h2>
+      <p style="color:var(--muted);">הכלי <strong>K9s</strong> הוא ממשק טרמינל אינטראקטיבי (Terminal UI) לניהול וניטור קלאסטרים של K8s בזמן אמת, שחוסך הקלדה של פקודות <code>kubectl</code> ארוכות.</p>
+
+      <h3>קיצורי דרך ופקודות חובה ב-K9s:</h3>
+      <ul>
+        <li><strong>ניווט בין משאבים (כניסה למצב פקודה עם נקודתיים <code>:</code>):</strong>
+          <ul>
+            <li>הפקודה <code>:pods</code> (או <code>:po</code>) – מעבר לתצוגת הפודים.</li>
+            <li>הפקודה <code>:deploy</code> (או <code>:dp</code>) – מעבר לתצוגת ה-Deployments.</li>
+            <li>הפקודה <code>:svc</code> – מעבר לתצוגת ה-Services.</li>
+            <li>הפקודה <code>:nodes</code> (או <code>:no</code>) – צפייה בשרתים (Nodes) ובניצולת המשאבים שלהם.</li>
+            <li>הפקודה <code>:ctx</code> – מעבר מהיר בין Contexts (קלאסטרים שונים).</li>
+            <li>הפקודה <code>:ns</code> – מעבר מהיר בין Namespaces (או לחיצה על המקש <code>0</code> כדי לראות את <strong>כל</strong> ה-Namespaces יחד).</li>
+            <li>הפקודה <code>:xray pod</code> – תצוגת עץ שמראה את הקשרים בין Deployment, ReplicaSet, Pod, Secrets ו-PVC.</li>
+            <li>הפקודה <code>:pulses</code> – לוח בקרה לבריאות כללית של הקלאסטר.</li>
+          </ul>
+        </li>
+        <li><strong>פעולות על משאב מסומן (למשל כשעומדים על Pod):</strong>
+          <ul>
+            <li>מקש <code>d</code> – פקודת <strong>Describe</strong> (שקול ל-<code>kubectl describe</code> – המקום הראשון שבודקים כשפוד תקוע ב-<code>Pending</code> או <code>ContainerCreating</code> כדי לראות את טבלת ה-<strong>Events</strong> בתחתית).</li>
+            <li>מקש <code>l</code> – צפייה ב-<strong>Logs</strong> בזמן אמת (לחיצה על <code>p</code> תציג לוגים של הקונטיינר הקודם שקרס!).</li>
+            <li>מקש <code>s</code> – פתיחת <strong>Shell</strong> (טרמינל אינטראקטיבי <code>exec -it</code> לתוך הקונטיינר).</li>
+            <li>מקש <code>y</code> – צפייה בקובץ ה-<strong>YAML</strong> המלא של המשאב.</li>
+            <li>מקש <code>e</code> – עריכת <strong>Edit</strong> של ה-YAML בזמן אמת (שקול ל-<code>kubectl edit</code>).</li>
+            <li>צירוף <code>Ctrl + d</code> – מחיקת המשאב (Delete).</li>
+            <li>צירוף <code>Ctrl + k</code> – הריגה מיידית של פוד תקוע (Kill / Force Delete עם <code>grace-period=0</code>).</li>
+            <li>צירוף <code>Shift + f</code> – ביצוע <strong>Port-Forward</strong> מהמחשב המקומי אל הפוד או ה-Service.</li>
+            <li>מקש <code>/</code> – סינון וחיפוש טקסטואלי ברשימה (למשל <code>/error</code> או שם של פוד).</li>
+          </ul>
+        </li>
+      </ul>
+    </div>
+
+    <!-- ==========================================
+         חלק 3: מעבדי GPU ודרייברים של CUDA
+         ========================================== -->
+    <div id="part-3" class="card">
+      <h2>חלק 3: מעבדי GPU ודרייברים של CUDA (בעולם ה-Linux וה-K8s)</h2>
+      <p style="color:var(--muted);">כשמריצים עומסי GPU על Kubernetes, יש מספר שכבות תוכנה וחומרה שחייבות לעבוד יחד:</p>
+
+      <div class="mermaid-box">
+        <div class="mermaid">
+flowchart TD
+    APP["PyTorch / AI Container (CUDA Libraries)"]
+    NCT["NVIDIA Container Toolkit (nvidia-container-runtime)"]
+    K8S_DP["K8s NVIDIA Device Plugin (exposes nvidia.com/gpu)"]
+    DRIVER["Linux Host: NVIDIA Kernel Driver (nvidia.ko)"]
+    HW["Physical Hardware: NVIDIA H100 / A100 GPU"]
+
+    APP --&gt; NCT
+    K8S_DP --&gt; NCT
+    NCT --&gt; DRIVER
+    DRIVER --&gt; HW
+        </div>
       </div>
 
-      <!-- PART 3 -->
-      <div class="card">
-        <h2>חלק 3: מעבדי GPU ודרייברים של CUDA (בעולם ה-Linux וה-K8s)</h2>
-        <p style="color:var(--muted);">כשמריצים עומסי GPU על Kubernetes, יש מספר שכבות תוכנה וחומרה שחייבות לעבוד יחד:</p>
+      <h3>1. ההבדל בין NVIDIA Driver לבין CUDA Toolkit</h3>
+      <ul>
+        <li><strong>דרייבר הקרנל (NVIDIA Kernel Driver):</strong> מותקן ברמת מערכת ההפעלה של השרת המארח (מודול קרנל <code>nvidia.ko</code>). הוא מתקשר ישירות עם החומרה הפיזית. בלעדיו הפקודה <code>nvidia-smi</code> לא תעבוד.</li>
+        <li><strong>ערכת הכלים (CUDA Toolkit / Runtime):</strong> ספריות תוכנה (כמו <code>libcudart</code>, <code>cuBLAS</code>, <code>cuDNN</code>, <code>NCCL</code>) שבהן האפליקציה (כמו PyTorch) משתמשת. <strong>בעבודה עם קונטיינרים, ה-CUDA Toolkit נמצא בתוך ה-Image של הקונטיינר</strong>, בעוד ה-Kernel Driver נמצא על השרת המארח (Host)!</li>
+        <li><strong>כלל תאימות חשוב:</strong> גרסת ה-Driver על השרת חייבת להיות חדשה מספיק כדי לתמוך בגרסת ה-CUDA שבתוך הקונטיינר (תאימות לאחור – Backward Compatibility). בפקודה <code>nvidia-smi</code> רואים בפינה הימנית העליונה את גרסת ה-CUDA המקסימלית שהדרייבר הנוכחי תומך בה.</li>
+      </ul>
 
-        <!-- Architecture Diagram 2 -->
-        <div class="arch-diagram">
-          <div style="max-width: 520px; margin: 0 auto;">
-            <span class="arch-pill" style="border-color:#38bdf8;">PyTorch / AI Container (CUDA Runtime Libraries: cuBLAS, NCCL)</span>
-            <div class="arch-arrow">↓</div>
-            <span class="arch-pill">NVIDIA Container Toolkit (nvidia-container-runtime) + K8s Device Plugin</span>
-            <div class="arch-arrow">↓</div>
-            <span class="arch-pill" style="border-color:#f59e0b;">Linux Host: NVIDIA Kernel Driver (nvidia.ko)</span>
-            <div class="arch-arrow">↓</div>
-            <span class="arch-pill" style="border-color:#10b981; color:#6ee7b7;">Physical Hardware: NVIDIA H100 / A100 GPU</span>
-          </div>
-        </div>
+      <h3>2. איך Kubernetes יודע לדבר עם כרטיסי GPU?</h3>
+      <p style="color:var(--muted);">בברירת מחדל, K8s מכיר רק CPU ו-Memory, וקונטיינר רגיל לא רואה את כרטיסי ה-GPU של השרת. כדי לגשר על הפער משתמשים בשלושה רכיבים:</p>
+      <ol>
+        <li><strong>רכיב NVIDIA Container Toolkit:</strong> תוסף למנוע <code>containerd</code> שחושף את קבצי החומרה של הכרטיסים (<code>/dev/nvidia0</code>, <code>/dev/nvidiactl</code>) ואת ספריות הדרייבר מה-Host לתוך הקונטיינר בזמן הרצתו.</li>
+        <li><strong>רכיב NVIDIA Device Plugin:</strong> רץ כ-DaemonSet על כל שרתי ה-GPU, סורק כמה כרטיסים תקינים יש בשרת, ומדווח ל-<code>kube-apiserver</code> שיש משאב זמין מסוג <code>nvidia.com/gpu</code>.</li>
+        <li><strong>מערכת NVIDIA GPU Operator:</strong> הארכיטקטורה המודרנית ב-K8s (בשימוש נרחב ב-Crusoe) שמנהלת אוטומטית באמצעות Helm ו-Operator את <strong>כל</strong> הרכיבים כקונטיינרים: התקנת הדרייברים על ה-Node, ה-Container Toolkit, ה-Device Plugin, כלי הניטור (<strong>DCGM Exporter</strong> עבור Prometheus), וגילוי אוטומטי של מאפייני הכרטיס (<strong>GFD - GPU Feature Discovery</strong> שמוסיף Labels ל-Node כמו דגם הכרטיס וכמות הזיכרון).</li>
+      </ol>
 
-        <h3>1. ההבדל בין NVIDIA Driver לבין CUDA Toolkit</h3>
-        <ul>
-          <li><strong>דרייבר הקרנל (NVIDIA Kernel Driver):</strong> מותקן ברמת מערכת ההפעלה של השרת המארח (מודול קרנל <code>nvidia.ko</code>). הוא מתקשר ישירות עם החומרה הפיזית. בלעדיו הפקודה <code>nvidia-smi</code> לא תעבוד.</li>
-          <li><strong>ערכת הכלים (CUDA Toolkit / Runtime):</strong> ספריות תוכנה (כמו <code>libcudart</code>, <code>cuBLAS</code>, <code>cuDNN</code>, <code>NCCL</code>) שבהן האפליקציה (כמו PyTorch) משתמשת. <strong>בעבודה עם קונטיינרים, ה-CUDA Toolkit נמצא בתוך ה-Image של הקונטיינר</strong>, בעוד ה-Kernel Driver נמצא על השרת המארח (Host)!</li>
-          <li><strong>כלל תאימות חשוב:</strong> גרסת ה-Driver על השרת חייבת להיות חדשה מספיק כדי לתמוך בגרסת ה-CUDA שבתוך הקונטיינר (תאימות לאחור – Backward Compatibility). בפקודה <code>nvidia-smi</code> רואים בפינה הימנית העליונה את גרסת ה-CUDA המקסימלית שהדרייבר הנוכחי תומך בה.</li>
-        </ul>
-
-        <h3>2. איך Kubernetes יודע לדבר עם כרטיסי GPU?</h3>
-        <p style="color:var(--muted);">בברירת מחדל, K8s מכיר רק CPU ו-Memory, וקונטיינר רגיל לא רואה את כרטיסי ה-GPU של השרת. כדי לגשר על הפער משתמשים בשלושה רכיבים:</p>
-        <ol>
-          <li><strong>רכיב NVIDIA Container Toolkit:</strong> תוסף למנוע <code>containerd</code> שחושף את קבצי החומרה של הכרטיסים (<code>/dev/nvidia0</code>, <code>/dev/nvidiactl</code>) ואת ספריות הדרייבר מה-Host לתוך הקונטיינר בזמן הרצתו.</li>
-          <li><strong>רכיב NVIDIA Device Plugin:</strong> רץ כ-DaemonSet על כל שרתי ה-GPU, סורק כמה כרטיסים תקינים יש בשרת, ומדווח ל-<code>kube-apiserver</code> שיש משאב זמין מסוג <code>nvidia.com/gpu</code>.</li>
-          <li><strong>מערכת NVIDIA GPU Operator:</strong> הארכיטקטורה המודרנית ב-K8s (בשימוש נרחב ב-Crusoe) שמנהלת אוטומטית באמצעות Helm ו-Operator את <strong>כל</strong> הרכיבים כקונטיינרים: התקנת הדרייברים על ה-Node, ה-Container Toolkit, ה-Device Plugin, כלי הניטור (<strong>DCGM Exporter</strong> עבור Prometheus), וגילוי אוטומטי של מאפייני הכרטיס (<strong>GFD - GPU Feature Discovery</strong> שמוסיף Labels ל-Node כמו דגם הכרטיס וכמות הזיכרון).</li>
-        </ol>
-        <p><strong>איך מבקשים GPU בקובץ ה-YAML של Pod?</strong></p>
-        <pre>resources:
+      <p><strong>איך מבקשים GPU בקובץ ה-YAML של Pod?</strong></p>
+      <pre>resources:
   limits:
     nvidia.com/gpu: 8 # ב-GPUs מגדירים ב-limits (אין Overcommit של GPU מלא)</pre>
 
-        <h3>3. דיאגנוסטיקה ותקלות GPU נפוצות (נקודת בונוס ענקית לראיון!)</h3>
-        <ul>
-          <li><strong>הפקודה <code>nvidia-smi</code>:</strong> מציגה טמפרטורה, צריכת חשמל, ניצולת זיכרון (VRAM), תהליכים רצים, ומצב שגיאות זיכרון (<strong>ECC</strong>).</li>
-          <li><strong>שגיאות XID (או XID Errors):</strong> קודי שגיאה קריטיים שהדרייבר של NVIDIA כותב ללוג של הקרנל בלינוקס (<code>dmesg -T | grep -i NVRM</code> או חיפוש <code>Xid</code>).
-            <ul>
-              <li>למשל: <code>Xid 79: GPU has fallen off the bus</code> (בעיית חומרה או PCIe, מצריכה אתחול לשרת או החלפת רכיב), <code>Xid 48 / 63 / 64 / 94</code> (שגיאות זיכרון ECC שדורשות איפוס או החלפת GPU), <code>Xid 43 / 31 / 13</code> (לרוב שגיאת תוכנה או חריגת זיכרון בקוד של המשתמש).</li>
-            </ul>
-          </li>
-          <li><strong>כלי הבדיקה DCGM (Data Center GPU Manager):</strong> כלי של NVIDIA לניטור ובדיקת מאמץ ובריאות (<code>dcgmi diag -r 3</code> מריץ בדיקת חומרה מקיפה לכרטיסים לפני שמחזירים שרת לקלאסטר).</li>
-          <li><strong>שירות NVIDIA Fabric Manager:</strong> בשרתים עם 8 כרטיסי H100/A100 המחוברים ביניהם ב-<strong>NVLink / NVSwitch</strong> (תקשורת פנימית מהירה במיוחד בין הכרטיסים באותו שרת), שירות לינוקס בשם <code>nvidia-fabricmanager</code> חייב לרוץ. אם הוא נופל, אימוני GPU מרובים על השרת ייכשלו מיד!</li>
-        </ul>
-      </div>
+      <h3>3. דיאגנוסטיקה ותקלות GPU נפוצות (נקודת בונוס ענקית לראיון!)</h3>
+      <ul>
+        <li><strong>הפקודה <code>nvidia-smi</code></strong>: מציגה טמפרטורה, צריכת חשמל, ניצולת זיכרון (VRAM), תהליכים רצים, ומצב שגיאות זיכרון (<strong>ECC</strong>).</li>
+        <li><strong>שגיאות XID (או XID Errors)</strong>: קודי שגיאה קריטיים שהדרייבר של NVIDIA כותב ללוג של הקרנל בלינוקס (<code>dmesg -T | grep -i NVRM</code> או חיפוש <code>Xid</code>).
+          <ul>
+            <li>למשל: <code>Xid 79: GPU has fallen off the bus</code> (בעיית חומרה או PCIe, מצריכה אתחול לשרת או החלפת רכיב), <code>Xid 48 / 63 / 64 / 94</code> (שגיאות זיכרון ECC שדורשות איפוס או החלפת GPU), <code>Xid 43 / 31 / 13</code> (לרוב שגיאת תוכנה או חריגת זיכרון בקוד של המשתמש).</li>
+          </ul>
+        </li>
+        <li><strong>כלי הבדיקה DCGM (Data Center GPU Manager)</strong>: כלי של NVIDIA לניטור ובדיקת מאמץ ובריאות (<code>dcgmi diag -r 3</code> מריץ בדיקת חומרה מקיפה לכרטיסים לפני שמחזירים שרת לקלאסטר).</li>
+        <li><strong>שירות NVIDIA Fabric Manager</strong>: בשרתים עם 8 כרטיסי H100/A100 המחוברים ביניהם ב-<strong>NVLink / NVSwitch</strong> (תקשורת פנימית מהירה במיוחד בין הכרטיסים באותו שרת), שירות לינוקס בשם <code>nvidia-fabricmanager</code> חייב לרוץ. אם הוא נופל, אימוני GPU מרובים על השרת ייכשלו מיד!</li>
+      </ul>
+    </div>
 
-      <!-- PART 4 -->
-      <div class="card">
-        <h2>חלק 4: רשתות InfiniBand (IB) וטכנולוגיית RDMA</h2>
+    <!-- ==========================================
+         חלק 4: רשתות InfiniBand (IB) וטכנולוגיית RDMA
+         ========================================== -->
+    <div id="part-4" class="card">
+      <h2>חלק 4: רשתות InfiniBand (IB) וטכנולוגיית RDMA</h2>
 
-        <h3>1. למה צריך InfiniBand בענן AI?</h3>
-        <p style="color:var(--muted);">כשמאמנים מודל שפה ענק (LLM) על מאות או אלפי כרטיסי GPU הפרוסים על עשרות שרתים, הכרטיסים חייבים לסנכרן ביניהם את הגרדיאנטים (Gradients) בכל שלב אימון (פעולת All-Reduce באמצעות ספריית <strong>NCCL</strong>). רשת Ethernet רגילה איטית מדי ובעלת שיהוי (Latency) גבוה בגלל שהמידע עובר דרך המעבד (CPU) וה-Kernel של מערכת ההפעלה (TCP/IP Stack).</p>
-        <p style="color:var(--muted);">כאן נכנסים <strong>InfiniBand (IB)</strong> ו-<strong>RDMA</strong>:</p>
-        <ul>
-          <li><strong>טכנולוגיית RDMA (Remote Direct Memory Access):</strong> מאפשרת לכרטיס הרשת לקרוא ולכתוב ישירות לזיכרון של שרת מרוחק <strong>בלי לערב את המעבד (CPU) או את הקרנל של מערכת ההפעלה</strong> (Zero-copy, Kernel bypass). התוצאה: שיהוי (Latency) של מיקרו-שניות בודדות, רוחב פס אדיר של <strong>400Gbps (תקן NDR)</strong> או <strong>800Gbps (תקן XDR)</strong> לפורט בודד, וניצולת מקסימלית (<strong>MFU - Model FLOPs Utilization</strong>) של החומרה היקרה!</li>
-          <li><strong>טכנולוגיית GPUDirect RDMA:</strong> לוקחת את זה צעד קדימה – כרטיס הרשת של ה-InfiniBand (שנקרא <strong>HCA - Host Channel Adapter</strong>, לרוב מתוצרת NVIDIA Mellanox ConnectX-7) מעביר מידע <strong>ישירות לזיכרון ה-VRAM של ה-GPU</strong> דרך אפיק ה-PCIe/NVLink, בלי לעבור אפילו בזיכרון ה-RAM של השרת!</li>
-          <li><em>(הערה: קיימת גם חלופה בשם <strong>RoCEv2</strong> – RDMA over Converged Ethernet, שמריצה פרוטוקול RDMA מעל רשתות Ethernet מהירות).</em></li>
-        </ul>
+      <h3>1. למה צריך InfiniBand בענן AI?</h3>
+      <p style="color:var(--muted);">כשמאמנים מודל שפה ענק (LLM) על מאות או אלפי כרטיסי GPU הפרוסים על עשרות שרתים, הכרטיסים חייבים לסנכרן ביניהם את הגרדיאנטים (Gradients) בכל שלב אימון (פעולת All-Reduce באמצעות ספריית <strong>NCCL</strong>). רשת Ethernet רגילה איטית מדי ובעלת שיהוי (Latency) גבוה בגלל שהמידע עובר דרך המעבד (CPU) וה-Kernel של מערכת ההפעלה (TCP/IP Stack).</p>
+      <p style="color:var(--muted);">כאן נכנסים <strong>InfiniBand (IB)</strong> ו-<strong>RDMA</strong>:</p>
+      <ul>
+        <li><strong>טכנולוגיית RDMA (Remote Direct Memory Access):</strong> מאפשרת לכרטיס הרשת לקרוא ולכתוב ישירות לזיכרון של שרת מרוחק <strong>בלי לערב את המעבד (CPU) או את הקרנל של מערכת ההפעלה</strong> (Zero-copy, Kernel bypass). התוצאה: שיהוי (Latency) של מיקרו-שניות בודדות ורוחב פס אדיר של <strong>400Gbps (תקן NDR)</strong> או <strong>800Gbps (תקן XDR)</strong> לפורט בודד!</li>
+        <li><strong>טכנולוגיית GPUDirect RDMA:</strong> לוקחת את זה צעד קדימה – כרטיס הרשת של ה-InfiniBand (שנקרא <strong>HCA - Host Channel Adapter</strong>, לרוב מתוצרת NVIDIA Mellanox ConnectX-7) מעביר מידע <strong>ישירות לזיכרון ה-VRAM של ה-GPU</strong> דרך אפיק ה-PCIe/NVLink, בלי לעבור אפילו בזיכרון ה-RAM של השרת!</li>
+        <li><em>(הערה: קיימת גם חלופה בשם <strong>RoCEv2</strong> – RDMA over Converged Ethernet, שמריצה פרוטוקול RDMA מעל רשתות Ethernet מהירות).</em></li>
+      </ul>
 
-        <h3>2. מושגי יסוד וכלי CLI ב-InfiniBand</h3>
-        <ul>
-          <li><strong>כרטיס HCA (Host Channel Adapter):</strong> כרטיס הרשת של InfiniBand המותקן בשרת.</li>
-          <li><strong>מנהל הרשת Subnet Manager (<code>opensm</code>):</strong> בניגוד לרשת Ethernet שבה כל מתג לומד לבד, רשת InfiniBand <strong>חייבת</strong> רכיב תוכנה מרכזי שנקרא Subnet Manager שמגדיר את הטופולוגיה, מקצה כתובות (<strong>LID</strong> - Local Identifier, המקבילה של IB לכתובת MAC/IP), ומחשב טבלאות ניתוב. אם ה-Subnet Manager לא פעיל, הפורטים יישארו תקועים במצב <code>Initializing</code> ולא יעברו למצב <code>Active</code>.</li>
-          <li><strong>מצבי פורט ב-InfiniBand:</strong>
-            <ul>
-              <li>מצב <code>Down</code> / <code>Polling</code>: אין חיבור פיזי (כבל אופטי מנותק או מתג כבוי).</li>
-              <li>מצב <code>Init</code> (Initializing): יש חיבור פיזי (שכבה 1 תקינה), אבל ה-Subnet Manager עדיין לא הגדיר את הפורט.</li>
-              <li>מצב <code>Active</code>: הפורט תקין ומוכן להעברת מידע!</li>
-            </ul>
-          </li>
-          <li><strong>פקודות דיאגנוסטיקה שחשוב להכיר לראיון:</strong>
-            <ul>
-              <li>הפקודה <code>ibstat</code> או <code>ibstatus</code>: מציגה את מצב הכרטיסים בשרת (<code>State: Active</code>, <code>Physical state: LinkUp</code>, וקצב העברה כמו <code>400 Gb/sec (4X NDR)</code>).</li>
-              <li>הפקודה <code>ibv_devinfo</code>: מציגה מידע על התקני ה-RDMA בשרת (<code>mlx5_0</code>, <code>mlx5_1</code> וכו').</li>
-              <li>הפקודות <code>iblinkinfo</code> / <code>ibnetdiscover</code>: סריקת הטופולוגיה של הרשת והמתגים.</li>
-              <li>הפקודה <code>perfquery</code>: בדיקת מוני שגיאות (Error Counters כמו <code>SymbolErrorCounter</code> או <code>LinkDownedCounter</code>) על הפורט – מעולה לזיהוי כבל אופטי מלוכלך או פגום שגורם לניתוקים (Link Flapping).</li>
-              <li>הפקודות <code>ib_write_bw</code> / <code>ib_send_lat</code>: כלי בדיקת רוחב פס ושיהוי RDMA בין שני שרתים (בדומה ל-<code>iperf</code> בעולם ה-Ethernet).</li>
-            </ul>
-          </li>
-        </ul>
+      <h3>2. מושגי יסוד וכלי CLI ב-InfiniBand</h3>
+      <ul>
+        <li><strong>כרטיס HCA (Host Channel Adapter):</strong> כרטיס הרשת של InfiniBand המותקן בשרת.</li>
+        <li><strong>מנהל הרשת Subnet Manager (<code>opensm</code>):</strong> בניגוד לרשת Ethernet שבה כל מתג לומד לבד, רשת InfiniBand <strong>חייבת</strong> רכיב תוכנה מרכזי שנקרא Subnet Manager שמגדיר את הטופולוגיה, מקצה כתובות (<strong>LID</strong> - Local Identifier, המקבילה של IB לכתובת MAC/IP), ומחשב טבלאות ניתוב. אם ה-Subnet Manager לא פעיל, הפורטים יישארו תקועים במצב <code>Initializing</code> ולא יעברו למצב <code>Active</code>.</li>
+        <li><strong>מצבי פורט ב-InfiniBand:</strong>
+          <ul>
+            <li>מצב <code>Down</code> / <code>Polling</code>: אין חיבור פיזי (כבל אופטי מנותק או מתג כבוי).</li>
+            <li>מצב <code>Init</code> (Initializing): יש חיבור פיזי (שכבה 1 תקינה), אבל ה-Subnet Manager עדיין לא הגדיר את הפורט.</li>
+            <li>מצב <code>Active</code>: הפורט תקין ומוכן להעברת מידע!</li>
+          </ul>
+        </li>
+        <li><strong>פקודות דיאגנוסטיקה שחשוב להכיר לראיון:</strong>
+          <ul>
+            <li>הפקודה <code>ibstat</code> או <code>ibstatus</code>: מציגה את מצב הכרטיסים בשרת (<code>State: Active</code>, <code>Physical state: LinkUp</code>, וקצב העברה כמו <code>400 Gb/sec (4X NDR)</code>).</li>
+            <li>הפקודה <code>ibv_devinfo</code>: מציגה מידע על התקני ה-RDMA בשרת (<code>mlx5_0</code>, <code>mlx5_1</code> וכו').</li>
+            <li>הפקודות <code>iblinkinfo</code> / <code>ibnetdiscover</code>: סריקת הטופולוגיה של הרשת והמתגים.</li>
+            <li>הפקודה <code>perfquery</code>: בדיקת מוני שגיאות (Error Counters כמו <code>SymbolErrorCounter</code> או <code>LinkDownedCounter</code>) על הפורט – מעולה לזיהוי כבל אופטי מלוכלך או פגום שגורם לניתוקים (Link Flapping).</li>
+            <li>הפקודות <code>ib_write_bw</code> / <code>ib_send_lat</code>: כלי בדיקת רוחב פס ושיהוי RDMA בין שני שרתים (בדומה ל-<code>iperf</code> בעולם ה-Ethernet).</li>
+          </ul>
+        </li>
+      </ul>
 
-        <h3>3. שימוש ב-InfiniBand בתוך Kubernetes</h3>
-        <p style="color:var(--muted);">איך מחברים Pod ב-K8s לרשת InfiniBand מהירה בלי לאבד ביצועים? משתמשים ב-<strong>NVIDIA Network Operator</strong> יחד עם:</p>
-        <ul>
-          <li><strong>תוסף Multus CNI:</strong> מאפשר ל-Pod לקבל <strong>מספר כרטיסי רשת</strong> – כרטיס אחד רגיל (<code>eth0</code>) לניהול K8s, ועוד כרטיסי InfiniBand/RDMA מהירים לתקשורת ה-GPU בין השרתים.</li>
-          <li><strong>טכנולוגיית SR-IOV (Single Root I/O Virtualization):</strong> מאפשרת לחלק כרטיס רשת פיזי אחד (PF) למספר כרטיסים וירטואליים (VF) ולחבר אותם ישירות לתוך ה-Pod בביצועי Bare-metal (עוקף את שכבת הווירטואליזציה של לינוקס).</li>
-          <li>לחיבור RDMA בקונטיינר חובה להוסיף ל-Pod הרשאת לינוקס <code>IPC_LOCK</code> (תחת <code>securityContext.capabilities</code>) כדי לאפשר נעילת זיכרון (Pinned Memory) עבור RDMA.</li>
-        </ul>
-      </div>
+      <h3>3. שימוש ב-InfiniBand בתוך Kubernetes</h3>
+      <p style="color:var(--muted);">איך מחברים Pod ב-K8s לרשת InfiniBand מהירה בלי לאבד ביצועים?</p>
+      <ul>
+        <li>משתמשים ב-<strong>NVIDIA Network Operator</strong> יחד עם:
+          <ul>
+            <li><strong>תוסף Multus CNI:</strong> מאפשר ל-Pod לקבל <strong>מספר כרטיסי רשת</strong> – כרטיס אחד רגיל (<code>eth0</code>) לניהול K8s, ועוד כרטיסי InfiniBand/RDMA מהירים לתקשורת ה-GPU בין השרתים.</li>
+            <li><strong>טכנולוגיית SR-IOV (Single Root I/O Virtualization):</strong> מאפשרת לחלק כרטיס רשת פיזי אחד (PF) למספר כרטיסים וירטואליים (VF) ולחבר אותם ישירות לתוך ה-Pod בביצועי Bare-metal (עוקף את שכבת הווירטואליזציה של לינוקס).</li>
+            <li>לחיבור RDMA בקונטיינר חובה להוסיף ל-Pod הרשאת לינוקס <code>IPC_LOCK</code> (תחת <code>securityContext.capabilities</code>) כדי לאפשר נעילת זיכרון (Pinned Memory) עבור RDMA.</li>
+          </ul>
+        </li>
+      </ul>
+    </div>
 
-      <!-- PART 5 -->
-      <div class="card">
-        <h2>חלק 5: מערכת התזמון SLURM (ניהול תורים ו-HPC)</h2>
-        <p style="color:var(--muted);">לקוחות רבים של Crusoe (חוקרי AI ומעבדות מחקר) מעדיפים לעבוד עם <strong>SLURM</strong> (ראשי תיבות של Simple Linux Utility for Resource Management) במקום (או מעל) Kubernetes, כי היא מתוכננת מראש להרצת משימות Batch מאסיביות ומסונכרנות על מאות שרתים במקביל (Gang Scheduling).</p>
+    <!-- ==========================================
+         חלק 5: מערכת התזמון SLURM (ניהול תורים ו-HPC)
+         ========================================== -->
+    <div id="part-5" class="card">
+      <h2>חלק 5: מערכת התזמון SLURM (ניהול תורים ו-HPC)</h2>
+      <p style="color:var(--muted);">לקוחות רבים של Crusoe (חוקרי AI ומעבדות מחקר) מעדיפים לעבוד עם <strong>SLURM</strong> (ראשי תיבות של Simple Linux Utility for Resource Management) במקום (או מעל) Kubernetes, כי היא מתוכננת מראש להרצת משימות Batch מאסיביות ומסונכרנות על מאות שרתים במקביל (Gang Scheduling).</p>
 
-        <h3>1. ארכיטקטורת SLURM</h3>
-        <ul>
-          <li><strong>הבקר המרכזי <code>slurmctld</code> (Controller Daemon):</strong> המוח המרכזי (מקביל ל-Control Plane ב-K8s). מנהל את התורים (Partitions), מנטר את השרתים, ומתזמן עבודות (Jobs).</li>
-          <li><strong>סוכן השרת <code>slurmd</code> (Compute Node Daemon):</strong> הסוכן שרץ על כל שרת GPU (מקביל ל-<code>kubelet</code>). מריץ את המשימות ומדווח סטטוס לבקר.</li>
-          <li><strong>שירות מסד הנתונים <code>slurmdbd</code> (Database Daemon):</strong> שומר היסטוריית הרצות, חשבונאות (Accounting), ומכסות שימוש (Fairshare) מול מסד נתונים.</li>
-          <li><strong>מחיצה (Partition):</strong> תור עבודה לוגי (קבוצה של שרתים עם מאפיינים דומים או עדיפות מסוימת).</li>
-          <li><strong>מנגנון GRES (Generic Resource Scheduling):</strong> המנגנון שבו SLURM מנהל משאבי חומרה מיוחדים כמו כרטיסי GPU (מוגדר בקובץ <code>gres.conf</code>, ונדרש באמצעות הדגל <code>--gres=gpu:8</code>).</li>
-        </ul>
+      <h3>1. ארכיטקטורת SLURM</h3>
+      <ul>
+        <li><strong>הבקר המרכזי <code>slurmctld</code> (Controller Daemon):</strong> המוח המרכזי (מקביל ל-Control Plane ב-K8s). מנהל את התורים (Partitions), מנטר את השרתים, ומתזמן עבודות (Jobs).</li>
+        <li><strong>סוכן השרת <code>slurmd</code> (Compute Node Daemon):</strong> הסוכן שרץ על כל שרת GPU (מקביל ל-<code>kubelet</code>). מריץ את המשימות ומדווח סטטוס לבקר.</li>
+        <li><strong>שירות מסד הנתונים <code>slurmdbd</code> (Database Daemon):</strong> שומר היסטוריית הרצות, חשבונאות (Accounting), ומכסות שימוש (Fairshare) מול מסד נתונים.</li>
+        <li><strong>מחיצה (Partition):</strong> תור עבודה לוגי (קבוצה של שרתים עם מאפיינים דומים או עדיפות מסוימת).</li>
+        <li><strong>מנגנון GRES (Generic Resource Scheduling):</strong> המנגנון שבו SLURM מנהל משאבי חומרה מיוחדים כמו כרטיסי GPU (מוגדר בקובץ <code>gres.conf</code>, ונדרש באמצעות הדגל <code>--gres=gpu:8</code>).</li>
+      </ul>
 
-        <h3>2. פקודות SLURM קריטיות לראיון</h3>
-        <table>
-          <thead>
-            <tr>
-              <th>פקודה</th>
-              <th>תפקיד ודוגמאות שימוש</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td><code>sinfo</code></td>
-              <td>הצגת מצב הקלאסטר, ה-Partitions ומצב השרתים (<code>idle</code> = פנוי, <code>alloc</code> = תפוס בעבודה, <code>mix</code> = חלק מהמשאבים תפוסים, <code>drain</code> = הוצא לתחזוקה לאחר סיום העבודה הנוכחית, <code>down</code> = מושבת/תקול).</td>
-            </tr>
-            <tr>
-              <td><code>squeue</code></td>
-              <td>הצגת תור העבודות הרצות (<code>R</code> - Running) והממתינות (<code>PD</code> - Pending, כולל הסיבה להמתנה כמו <code>(Resources)</code> או <code>(Priority)</code> או <code>(ReqNodeNotAvail)</code>).</td>
-            </tr>
-            <tr>
-              <td><code>srun</code></td>
-              <td>הרצה אינטראקטיבית או הפעלת שלב מקבילי של עבודה על מספר שרתים. למשל: <code>srun --nodes=2 --gres=gpu:8 nvidia-smi</code>.</td>
-            </tr>
-            <tr>
-              <td><code>sbatch</code></td>
-              <td>שליחת סקריפט Batch לתור העבודה (רץ ברקע).</td>
-            </tr>
-            <tr>
-              <td><code>scancel &lt;job_id&gt;</code></td>
-              <td>ביטול עבודה רצה או ממתינה.</td>
-            </tr>
-            <tr>
-              <td><code>scontrol</code></td>
-              <td>כלי האדמין החזק ביותר! <code>scontrol show node &lt;name&gt;</code> (בדיקת מצב שרת וסיבת Drain), <code>scontrol show job &lt;id&gt;</code>, או הוצאת שרת לתחזוקה והחזרתו: <code>scontrol update NodeName=gpu-01 State=DRAIN Reason="Xid 79 GPU fault"</code> ו-<code>State=RESUME</code>.</td>
-            </tr>
-            <tr>
-              <td><code>sacct</code></td>
-              <td>צפייה בהיסטוריית עבודות שהסתיימו, כמה זמן רצו, והאם נכשלו (<code>COMPLETED</code>, <code>FAILED</code>, <code>OUT_OF_MEMORY</code>, <code>NODE_FAIL</code>).</td>
-            </tr>
-          </tbody>
-        </table>
+      <h3>2. פקודות SLURM קריטיות לראיון</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>פקודה</th>
+            <th>תפקיד ודוגמאות שימוש</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong><code>sinfo</code></strong></td>
+            <td>הצגת מצב הקלאסטר, ה-Partitions ומצב השרתים (<code>idle</code> = פנוי, <code>alloc</code> = תפוס בעבודה, <code>mix</code> = חלק מהמשאבים תפוסים, <code>drain</code> = הוצא לתחזוקה לאחר סיום העבודה הנוכחית, <code>down</code> = מושבת/תקול).</td>
+          </tr>
+          <tr>
+            <td><strong><code>squeue</code></strong></td>
+            <td>הצגת תור העבודות הרצות (<code>R</code> - Running) והממתינות (<code>PD</code> - Pending, כולל הסיבה להמתנה כמו <code>(Resources)</code> או <code>(Priority)</code> או <code>(ReqNodeNotAvail)</code>).</td>
+          </tr>
+          <tr>
+            <td><strong><code>srun</code></strong></td>
+            <td>הרצה אינטראקטיבית או הפעלת שלב מקבילי של עבודה על מספר שרתים. למשל: <code>srun --nodes=2 --gres=gpu:8 nvidia-smi</code>.</td>
+          </tr>
+          <tr>
+            <td><strong><code>sbatch</code></strong></td>
+            <td>שליחת סקריפט Batch לתור העבודה (רץ ברקע).</td>
+          </tr>
+          <tr>
+            <td><strong><code>scancel &lt;job_id&gt;</code></strong></td>
+            <td>ביטול עבודה רצה או ממתינה.</td>
+          </tr>
+          <tr>
+            <td><strong><code>scontrol</code></strong></td>
+            <td>כלי האדמין החזק ביותר! <code>scontrol show node &lt;name&gt;</code> (בדיקת מצב שרת וסיבת Drain), <code>scontrol show job &lt;id&gt;</code>, או הוצאת שרת לתחזוקה: <code>scontrol update NodeName=gpu-01 State=DRAIN Reason="Xid 79 GPU fault"</code>.</td>
+          </tr>
+          <tr>
+            <td><strong><code>sacct</code></strong></td>
+            <td>צפייה בהיסטוריית עבודות שהסתיימו, כמה זמן רצו, והאם נכשלו (<code>COMPLETED</code>, <code>FAILED</code>, <code>OUT_OF_MEMORY</code>, <code>NODE_FAIL</code>).</td>
+          </tr>
+        </tbody>
+      </table>
 
-        <p><strong>דוגמה לסקריפט <code>sbatch</code> לאימון מבוזר עם GPUs:</strong></p>
-        <pre>#!/bin/bash
+      <p><strong>דוגמה לסקריפט <code>sbatch</code> לאימון מבוזר עם GPUs:</strong></p>
+      <pre>#!/bin/bash
 #SBATCH --job-name=llm-train
 #SBATCH --nodes=4                # מבקש 4 שרתים
 #SBATCH --ntasks-per-node=8      # 8 משימות בכל שרת (אחת לכל GPU)
@@ -640,253 +647,123 @@
 
 srun python train.py</pre>
 
-        <h3>3. קונטיינרים ב-SLURM והשילוב עם Kubernetes</h3>
-        <ul>
-          <li><strong>שימוש ב-Pyxis ו-Enroot:</strong> בניגוד ל-Docker שדורש הרשאות <code>root</code> (בעייתי מאוד בקלאסטר HPC משותף), חברת NVIDIA פיתחה את <strong>Enroot</strong> (מנוע קונטיינרים קל משקל ללא root) ואת <strong>Pyxis</strong> (פלאגין ל-SLURM שמאפשר להריץ ישירות קונטיינר: <code>srun --container-image=nvcr.io/nvidia/pytorch:24.01-py3 ...</code>).</li>
-          <li><strong>הרצת SLURM מעל Kubernetes (למשל פרויקט Slinky של SchedMD ו-Crusoe):</strong> ארכיטקטורה מודרנית שבה מריצים קלאסטר SLURM <strong>בתוך פודים על גבי Kubernetes</strong>, כך שנהנים מניהול התשתית האחיד של K8s יחד עם חוויית המשתמש והתזמון של SLURM לחוקרי AI.</li>
-        </ul>
-      </div>
-
-      <!-- PART 6 -->
-      <div class="card">
-        <h2>חלק 6: תרחישי תקלות ושאלות ראיון נפוצות ב-Crusoe</h2>
-        <p style="color:var(--muted);">בראיון סביר מאוד שישאלו אותך שאלות בסגנון <strong>"לקוח מתלונן ש... איך תחקור את זה?"</strong>. הנה התרחישים הקלאסיים:</p>
-
-        <div class="subcard">
-          <h3>תרחיש 1: פוד עם GPU תקוע במצב <code>Pending</code> ב-K8s</h3>
-          <p><strong>איך ניגשים לזה?</strong></p>
-          <ol>
-            <li>פותחים K9s (או מריצים <code>kubectl describe pod &lt;name&gt;</code>) ומסתכלים על טבלת ה-<strong>Events</strong> בתחתית.</li>
-            <li><strong>סיבות נפוצות שמופיעות ב-Events:</strong>
-              <ul>
-                <li>הודעת <code>0/10 nodes are available: 10 Insufficient nvidia.com/gpu</code>: אין שרת פנוי עם כמות ה-GPUs המבוקשת (או שה-NVIDIA Device Plugin קרס על השרתים ולכן ה-Node מדווח <code>Allocatable: 0</code> עבור GPU).</li>
-                <li>הודעת <code>node(s) had untolerated taint</code>: שרתי GPU מוגדרים לרוב עם <strong>Taint</strong> (למשל <code>nvidia.com/gpu=present:NoSchedule</code>) כדי שפודים רגילים (ללא GPU) לא יתפסו עליהם מקום. הפוד של הלקוח חייב להכיל <strong>Toleration</strong> מתאים!</li>
-                <li>הודעת <code>node(s) didn't match Pod's nodeSelector/affinity</code>: הפוד ביקש סוג GPU ספציפי (למשל <code>nvidia.com/gpu.product: NVIDIA-H100-80GB-HBM3</code>) שאין כרגע בקלאסטר.</li>
-                <li>הודעת <code>pod has unbound immediate PersistentVolumeClaims</code>: בעיה באחסון – ה-PVC עדיין במצב <code>Pending</code> (למשל StorageClass שגוי או מערכת אחסון מלאה).</li>
-              </ul>
-            </li>
-          </ol>
-        </div>
-
-        <div class="subcard">
-          <h3>תרחיש 2: אימון מבוזר (Multi-Node GPU Training) קורס או תקוע בשלב ההתחלה (NCCL Timeout)</h3>
-          <p><strong>איך ניגשים לזה?</strong></p>
-          <ol>
-            <li>כשתהליכי PyTorch על מספר שרתים מתחילים אימון, הם מקימים תקשורת באמצעות ספריית <strong>NCCL</strong> מעל רשת <strong>InfiniBand</strong>.</li>
-            <li><strong>מה בודקים?</strong>
-              <ul>
-                <li>מריצים עם משתנה סביבה <code>NCCL_DEBUG=INFO</code> בלוגים של הפוד כדי לראות איפה בדיוק NCCL נתקע.</li>
-                <li><strong>בדיקת זיכרון משותף (<code>/dev/shm</code>):</strong> ב-Kubernetes, גודל ברירת המחדל של <code>/dev/shm</code> בקונטיינר הוא <strong>64MB בלבד!</strong> ספריית NCCL ו-PyTorch DataLoaders חייבים זיכרון משותף גדול בהרבה, אחרת הם קורסים מיד. הפתרון: חיבור Volume מסוג <code>emptyDir: { medium: Memory }</code> לנתיב <code>/dev/shm</code>.</li>
-                <li><strong>בדיקת InfiniBand:</strong> נכנסים לשרתים ובודקים עם <code>ibstat</code> שכל הפורטים במצב <code>Active</code> ו-<code>LinkUp</code>, ובודקים עם <code>perfquery</code> שאין שגיאות כבילה אופטית.</li>
-                <li><strong>בדיקת הרשאות RDMA:</strong> מוודאים שלפוד יש הרשאת <code>IPC_LOCK</code> ושגבול ה-<code>ulimit -l</code> (memlock) אינו מוגבל.</li>
-                <li><strong>בדיקת בידוד תקלה עם <code>nccl-tests</code>:</strong> מריצים את כלי הבנצ'מרק הסטנדרטי <code>all_reduce_perf</code> על השרתים החשודים (בחיפוש בינארי בין השרתים) כדי לבודד איזה שרת ספציפי גורם לאיטיות או לנתק.</li>
-              </ul>
-            </li>
-          </ol>
-        </div>
-
-        <div class="subcard">
-          <h3>תרחיש 3: שרת GPU ב-SLURM נכנס אוטומטית למצב <code>DRAIN</code> או שפודים ב-K8s נופלים עליו</h3>
-          <p><strong>איך ניגשים לזה?</strong></p>
-          <ol>
-            <li>במערכת SLURM: מריצים <code>scontrol show node &lt;node_name&gt;</code> ובודקים את השדה <code>Reason</code> (למשל <code>NHC: check_nv_smi: GPU count mismatch</code>). (הערה: <strong>NHC - Node Health Check</strong> הוא כלי שרץ אוטומטית ובודק תקינות שרתים).</li>
-            <li>מתחברים לשרת ובודקים <code>nvidia-smi</code>:
-              <ul>
-                <li>האם רואים את כל 8 הכרטיסים? אם רואים רק 7 (או הודעת <code>GPU is lost</code>), אחד הכרטיסים נפל מאפיק ה-PCIe.</li>
-                <li>בודקים <code>dmesg -T | grep -iE "xid|nvrm"</code> כדי למצוא את קוד ה-XID המדויק.</li>
-                <li>בודקים אם יש שגיאות זיכרון בלתי ניתנות לתיקון (<strong>Uncorrectable ECC</strong>) עם <code>nvidia-smi -q | grep -A 5 "ECC Errors"</code>.</li>
-                <li>בודקים שהשירות <code>systemctl status nvidia-fabricmanager</code> פעיל.</li>
-              </ul>
-            </li>
-            <li>מריצים בדיקת חומרה <code>dcgmi diag -r 3</code>. אם יש תקלת חומרה (כמו XID 79 או ECC חוזר), מסמנים את השרת ב-K8s עם <code>kubectl cordon &lt;node&gt;</code> ו-<code>kubectl drain &lt;node&gt;</code> (או משאירים ב-<code>DRAIN</code> ב-SLURM) ומעבירים לטיפול חומרה (RMA).</li>
-          </ol>
-        </div>
-      </div>
-
+      <h3>3. קונטיינרים ב-SLURM והשילוב עם Kubernetes</h3>
+      <ul>
+        <li><strong>שימוש ב-Pyxis ו-Enroot:</strong> בניגוד ל-Docker שדורש הרשאות <code>root</code> (בעייתי מאוד בקלאסטר HPC משותף), חברת NVIDIA פיתחה את <strong>Enroot</strong> (מנוע קונטיינרים קל משקל ללא root) ואת <strong>Pyxis</strong> (פלאגין ל-SLURM שמאפשר להריץ ישירות קונטיינר: <code>srun --container-image=nvcr.io/nvidia/pytorch:24.01-py3 ...</code>).</li>
+        <li><strong>הרצת SLURM מעל Kubernetes (למשל פרויקט Slinky של SchedMD ו-Crusoe):</strong> ארכיטקטורה מודרנית שבה מריצים קלאסטר SLURM <strong>בתוך פודים על גבי Kubernetes</strong>, כך שנהנים מניהול התשתית האחיד של K8s יחד עם חוויית המשתמש והתזמון של SLURM לחוקרי AI.</li>
+      </ul>
     </div>
 
-    <!-- TAB 2: K9S & KUBECTL CHEAT SHEET -->
-    <div id="tab-k9s" class="section">
-      <div class="card">
-        <h2>טבלת פקודות וקיצורי דרך ב-K9s וב-kubectl</h2>
-        <p style="color:var(--muted); font-size:0.9rem;">חשוב לזכור: ב-K9s קיצורי המקלדת עובדים רק כשהמקלדת במצב אנגלית (<code>ENG</code>)!</p>
-        <table>
-          <thead>
-            <tr>
-              <th>הפעולה שאנחנו רוצים לבצע</th>
-              <th>קיצור הדרך ב-K9s</th>
-              <th>הפקודה המקבילה ב-kubectl</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td><strong>מעבר בין משאבים (פודים / שירותים / סודות / מכסות)</strong></td>
-              <td><code>:pods</code> | <code>:svc</code> | <code>:secrets</code> | <code>:quota</code> | <code>:ns</code> | <code>:ctx</code></td>
-              <td><code>kubectl get pods,svc,secrets,quota -n ai-training</code></td>
-            </tr>
-            <tr>
-              <td><strong>בדיקת סיבת תקלה ב-Events (כשפוד ב-<code>Pending</code> או שגיאת קונפיג)</strong></td>
-              <td>מקש <code>d</code> (Describe) וגלילה למטה ל-<code>Events:</code></td>
-              <td><code>kubectl describe pod &lt;pod-name&gt; -n ai-training</code></td>
-            </tr>
-            <tr>
-              <td><strong>בדיקת לוגים של האפליקציה (כשפוד קורס ב-<code>CrashLoopBackOff</code>)</strong></td>
-              <td>מקש <code>l</code> (Logs) (ומקש <code>p</code> לריצה הקודמת שקרסה)</td>
-              <td><code>kubectl logs &lt;pod-name&gt; -n ai-training --previous</code></td>
-            </tr>
-            <tr>
-              <td><strong>פתיחת טרמינל (Shell) חי בתוך הקונטיינר</strong></td>
-              <td>מקש <code>s</code> (Shell)</td>
-              <td><code>kubectl exec -it &lt;pod-name&gt; -n ai-training -- /bin/sh</code></td>
-            </tr>
-            <tr>
-              <td><strong>צפייה או עריכת קובץ ה-YAML של משאב</strong></td>
-              <td>מקש <code>y</code> (צפייה ב-YAML) | מקש <code>e</code> (Edit)</td>
-              <td><code>kubectl get pod &lt;name&gt; -o yaml</code> / <code>kubectl edit</code></td>
-            </tr>
-            <tr>
-              <td><strong>פענוח Secret שמקודד ב-Base64</strong></td>
-              <td>בתוך <code>:secrets</code> לוחצים על מקש <code>x</code> (Decode)</td>
-              <td><code>kubectl get secret &lt;name&gt; -o jsonpath='{.data.KEY}' | base64 -d</code></td>
-            </tr>
-            <tr>
-              <td><strong>מחיקת פוד או החלפתו מקובץ YAML</strong></td>
-              <td>צירוף <code>Ctrl + d</code> (Delete)</td>
-              <td><code>kubectl apply -f file.yaml</code> / <code>kubectl replace --force -f file.yaml</code></td>
-            </tr>
-          </tbody>
-        </table>
+    <!-- ==========================================
+         חלק 6: תרחישי תקלות ושאלות ראיון נפוצות ב-Crusoe
+         ========================================== -->
+    <div id="part-6" class="card">
+      <h2>חלק 6: תרחישי תקלות ושאלות ראיון נפוצות ב-Crusoe</h2>
+      <p style="color:var(--muted);">בראיון סביר מאוד שישאלו אותך שאלות בסגנון <strong>"לקוח מתלונן ש... איך תחקור את זה?"</strong>. הנה התרחישים הקלאסיים:</p>
+
+      <div class="subcard">
+        <h3>תרחיש 1: פוד עם GPU תקוע במצב <code>Pending</code> ב-K8s</h3>
+        <p><strong>איך ניגשים לזה?</strong></p>
+        <ol>
+          <li>פותחים K9s (או מריצים <code>kubectl describe pod &lt;name&gt;</code>) ומסתכלים על טבלת ה-<strong>Events</strong> בתחתית.</li>
+          <li><strong>סיבות נפוצות שמופיעות ב-Events:</strong>
+            <ul>
+              <li>הודעת <code>0/10 nodes are available: 10 Insufficient nvidia.com/gpu</code>: אין שרת פנוי עם כמות ה-GPUs המבוקשת (או שה-NVIDIA Device Plugin קרס על השרתים ולכן ה-Node מדווח <code>Allocatable: 0</code> עבור GPU).</li>
+              <li>הודעת <code>node(s) had untolerated taint</code>: שרתי GPU מוגדרים לרוב עם <strong>Taint</strong> (למשל <code>nvidia.com/gpu=present:NoSchedule</code>) כדי שפודים רגילים (ללא GPU) לא יתפסו עליהם מקום. הפוד של הלקוח חייב להכיל <strong>Toleration</strong> מתאים!</li>
+              <li>הודעת <code>node(s) didn't match Pod's nodeSelector/affinity</code>: הפוד ביקש סוג GPU ספציפי (למשל <code>nvidia.com/gpu.product: NVIDIA-H100-80GB-HBM3</code>) שאין כרגע בקלאסטר.</li>
+              <li>הודעת <code>pod has unbound immediate PersistentVolumeClaims</code>: בעיה באחסון – ה-PVC עדיין במצב <code>Pending</code> (למשל StorageClass שגוי או מערכת אחסון מלאה).</li>
+            </ul>
+          </li>
+        </ol>
+      </div>
+
+      <div class="subcard">
+        <h3>תרחיש 2: אימון מבוזר (Multi-Node GPU Training) קורס או תקוע בשלב ההתחלה (NCCL Timeout)</h3>
+        <p><strong>איך ניגשים לזה?</strong></p>
+        <ol>
+          <li>כשתהליכי PyTorch על מספר שרתים מתחילים אימון, הם מקימים תקשורת באמצעות ספריית <strong>NCCL</strong> מעל רשת <strong>InfiniBand</strong>.</li>
+          <li><strong>מה בודקים?</strong>
+            <ul>
+              <li>מריצים עם משתנה סביבה <code>NCCL_DEBUG=INFO</code> בלוגים של הפוד כדי לראות איפה בדיוק NCCL נתקע.</li>
+              <li><strong>בדיקת זיכרון משותף (<code>/dev/shm</code>):</strong> ב-Kubernetes, גודל ברירת המחדל של <code>/dev/shm</code> בקונטיינר הוא <strong>64MB בלבד!</strong> ספריית NCCL ו-PyTorch DataLoaders חייבים זיכרון משותף גדול בהרבה, אחרת הם קורסים מיד. הפתרון: חיבור Volume מסוג <code>emptyDir: { medium: Memory }</code> לנתיב <code>/dev/shm</code>.</li>
+              <li><strong>בדיקת InfiniBand:</strong> נכנסים לשרתים ובודקים עם <code>ibstat</code> שכל הפורטים במצב <code>Active</code> ו-<code>LinkUp</code>, ובודקים עם <code>perfquery</code> שאין שגיאות כבילה אופטית.</li>
+              <li><strong>בדיקת הרשאות RDMA:</strong> מוודאים שלפוד יש הרשאת <code>IPC_LOCK</code> ושגבול ה-<code>ulimit -l</code> (memlock) אינו מוגבל.</li>
+              <li><strong>בדיקת בידוד תקלה עם <code>nccl-tests</code>:</strong> מריצים את כלי הבנצ'מרק הסטנדרטי <code>all_reduce_perf</code> על השרתים החשודים (בחיפוש בינארי בין השרתים) כדי לבודד איזה שרת ספציפי גורם לאיטיות או לנתק.</li>
+            </ul>
+          </li>
+        </ol>
+      </div>
+
+      <div class="subcard">
+        <h3>תרחיש 3: שרת GPU ב-SLURM נכנס אוטומטית למצב <code>DRAIN</code> או שפודים ב-K8s נופלים עליו</h3>
+        <p><strong>איך ניגשים לזה?</strong></p>
+        <ol>
+          <li>במערכת SLURM: מריצים <code>scontrol show node &lt;node_name&gt;</code> ובודקים את השדה <code>Reason</code> (למשל <code>NHC: check_nv_smi: GPU count mismatch</code>). (הערה: <strong>NHC - Node Health Check</strong> הוא כלי שרץ אוטומטית ובודק תקינות שרתים).</li>
+          <li>מתחברים לשרת ובודקים <code>nvidia-smi</code>:
+            <ul>
+              <li>האם רואים את כל 8 הכרטיסים? אם רואים רק 7 (או הודעת <code>GPU is lost</code>), אחד הכרטיסים נפל מאפיק ה-PCIe.</li>
+              <li>בודקים <code>dmesg -T | grep -iE "xid|nvrm"</code> כדי למצוא את קוד ה-XID המדויק.</li>
+              <li>בודקים אם יש שגיאות זיכרון בלתי ניתנות לתיקון (<strong>Uncorrectable ECC</strong>) עם <code>nvidia-smi -q | grep -A 5 "ECC Errors"</code>.</li>
+              <li>בודקים שהשירות <code>systemctl status nvidia-fabricmanager</code> פעיל.</li>
+            </ul>
+          </li>
+          <li>מריצים בדיקת חומרה <code>dcgmi diag -r 3</code>. אם יש תקלת חומרה (כמו XID 79 או ECC חוזר), מסמנים את השרת ב-K8s עם <code>kubectl cordon &lt;node&gt;</code> ו-<code>kubectl drain &lt;node&gt;</code> (או משאירים ב-<code>DRAIN</code> ב-SLURM) ומעבירים לטיפול חומרה (RMA).</li>
+        </ol>
       </div>
     </div>
 
-    <!-- TAB 3: K8S 6 BUGS LAB -->
-    <div id="tab-k8s-bugs" class="section">
-      <div class="card">
-        <h2>שש תקלות ה-Kubernetes שפתרנו במעבדה (תרחישי ראיון אמיתיים)</h2>
+    <!-- ==========================================
+         נספח מעשי: 6 תקלות מעבדה ושאלות ראיון אינטראקטיביות
+         ========================================== -->
+    <div id="part-lab" class="card">
+      <h2>נספח מעשי: 6 תקלות המעבדה שפתרנו + כרטיסיות תרגול לראיון</h2>
 
-        <div class="subcard">
-          <div style="display:flex; justify-content:space-between; align-items:center;">
-            <h3>1. הפוד תקוע ב-<code>Pending</code> עם הודעת <code>untolerated taint</code></h3>
-            <span class="badge badge-amber">Scheduler Event</span>
-          </div>
-          <p style="color:var(--muted); margin:6px 0;"><strong>הסיבה:</strong> שרתי ה-GPU מסומנים ב-<strong>Taint</strong> (<code>nvidia.com/gpu=present:NoSchedule</code>) כדי שפודים רגילים ללא GPU לא יתפסו אותם. <strong>הפתרון:</strong> הוספת בלוק <code>tolerations</code> תחת <code>spec</code> ב-YAML של הפוד:</p>
-          <pre>tolerations:
-  - key: "nvidia.com/gpu"
-    operator: "Exists"
-    effect: "NoSchedule"</pre>
+      <div class="subcard qa-box" onclick="this.classList.toggle('open')">
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+          <h3>שאלה 1: פוד GPU תקוע ב-Pending ואחרי שעלה קורס ב-CrashLoopBackOff ב-NCCL. איך תחקור ותפתור?</h3>
+          <span class="badge badge-emerald">לחץ להצגת תשובה ▾</span>
         </div>
-
-        <div class="subcard">
-          <div style="display:flex; justify-content:space-between; align-items:center;">
-            <h3>2. הפוד תקוע ב-<code>Pending</code> עם הודעת <code>Insufficient nvidia.com/gpu</code></h3>
-            <span class="badge badge-amber">Scheduler Event</span>
-          </div>
-          <p style="color:var(--muted); margin:6px 0;"><strong>הסיבה:</strong> הפוד מבקש יותר כרטיסי GPU ממה שפנוי בשרת בודד (למשל מבקש 8 כרטיסים כשבשרת יש 4), או שכל הכרטיסים תפוסים, או שה-<strong>NVIDIA Device Plugin</strong> נפל. <strong>הפתרון:</strong> התאמת <code>nvidia.com/gpu</code> (ב-<code>requests</code> וב-<code>limits</code>) לקיבולת הפנויה.</p>
-        </div>
-
-        <div class="subcard">
-          <div style="display:flex; justify-content:space-between; align-items:center;">
-            <h3>3. הפוד תקוע ב-<code>CreateContainerConfigError</code> (<code>Error: secret not found</code>)</h3>
-            <span class="badge badge-rose">Kubelet Error</span>
-          </div>
-          <p style="color:var(--muted); margin:6px 0;"><strong>הסיבה:</strong> ה-Scheduler כבר שיבץ את הפוד לשרת, אבל ה-<strong>kubelet</strong> שעל השרת ניסה להקים את הקונטיינר וגילה ששם ה-Secret תחת <code>secretKeyRef</code> שגוי. <strong>הפתרון:</strong> בדיקת השם ב-<code>:secrets</code> ב-K9s ועדכון ה-YAML.</p>
-        </div>
-
-        <div class="subcard">
-          <div style="display:flex; justify-content:space-between; align-items:center;">
-            <h3>4. הפוד קורס ב-<code>CrashLoopBackOff</code> בזמן אתחול NCCL (שגיאת <code>/dev/shm</code>)</h3>
-            <span class="badge badge-rose">Application Logs (מקש l)</span>
-          </div>
-          <p style="color:var(--muted); margin:6px 0;"><strong>הסיבה:</strong> גודל הזיכרון המשותף <code>/dev/shm</code> בברירת מחדל בקונטיינר הוא <strong>64MB בלבד</strong>, מה שמפיל את ספריית NCCL ו-PyTorch. <strong>הפתרון:</strong> חיבור דיסק זיכרון (<code>emptyDir: { medium: Memory }</code>) לנתיב <code>/dev/shm</code>:</p>
-          <pre>volumeMounts:
-  - name: dshm
-    mountPath: /dev/shm
-volumes:
-  - name: dshm
-    emptyDir:
-      medium: Memory
-      sizeLimit: 256Mi</pre>
-        </div>
-
-        <div class="subcard">
-          <div style="display:flex; justify-content:space-between; align-items:center;">
-            <h3>5. מבוי סתום בעדכון גרסה (<code>GPU RollingUpdate Deadlock</code>)</h3>
-            <span class="badge badge-amber">Deployment Strategy</span>
-          </div>
-          <p style="color:var(--muted); margin:6px 0;"><strong>הסיבה:</strong> כשכל כרטיסי ה-GPU תפוסים ומעדכנים Deployment, אסטרטגיית <code>RollingUpdate</code> מנסה להקים פוד חדש <strong>לפני</strong> שהיא מוחקת את הפוד הישן – ולכן הפוד החדש נתקע ב-<code>Pending</code>! <strong>הפתרון:</strong> מחיקת פוד ישן לשחרור GPU, או הגדרת <code>strategy: { type: Recreate }</code> (או <code>maxSurge: 0, maxUnavailable: 1</code>).</p>
-        </div>
-
-        <div class="subcard">
-          <div style="display:flex; justify-content:space-between; align-items:center;">
-            <h3>6. ה-Service לא מעביר תעבורה לפודים (<code>Endpoints: &lt;none&gt;</code>)</h3>
-            <span class="badge badge-rose">Service Selector</span>
-          </div>
-          <p style="color:var(--muted); margin:6px 0;"><strong>הסיבה:</strong> בבדיקת ה-Service ב-<code>:svc</code> עם מקש <code>d</code>, רואים ש-<code>Endpoints: &lt;none&gt;</code> כי ה-<code>selector</code> של ה-Service לא תואם בדיוק ל-<code>labels</code> של הפודים ב-Deployment.</p>
+        <div class="qa-answer">
+          <p>1. <strong>בדיקת Pending:</strong> נכנסים ל-K9s (<code>:pods</code>) ולוחצים על <code>d</code> (Describe) כדי לראות את ה-<code>Events</code>. הסיבות הנפוצות הן חוסר ב-<code>Toleration</code> ל-Taint של שרתי ה-GPU (<code>untolerated taint</code>) או חוסר בכרטיסי GPU פנויים בשרת בודד (<code>Insufficient nvidia.com/gpu</code>).</p>
+          <p>2. <strong>בדיקת CrashLoopBackOff:</strong> לוחצים על <code>l</code> (Logs) על הפוד הקורס. הסיבה הקלאסית לקריסת NCCL היא שגודל הזיכרון המשותף <code>/dev/shm</code> בברירת מחדל הוא <strong>64MB בלבד</strong>. הפתרון הוא הגדלת הווליום על ידי מיפוי <code>emptyDir: { medium: Memory }</code> לנתיב <code>/dev/shm</code>.</p>
         </div>
       </div>
-    </div>
 
-    <!-- TAB 4: INTERACTIVE QUIZ FLASHCARDS -->
-    <div id="tab-quiz" class="section">
-      <div class="card">
-        <h2>סימולטור שאלות ראיון ב-Crusoe (לחץ על כל שאלה לחשיפת התשובה!)</h2>
-
-        <div class="subcard qa-box" onclick="this.classList.toggle('open')">
-          <div style="display:flex; justify-content:space-between; align-items:center;">
-            <h3>שאלה 1: פוד GPU תקוע ב-Pending ואחרי שעלה קורס ב-CrashLoopBackOff ב-NCCL. איך תחקור ותפתור?</h3>
-            <span class="badge badge-emerald">לחץ להצגת תשובה ▾</span>
-          </div>
-          <div class="qa-answer">
-            <p>1. <strong>בדיקת Pending:</strong> נכנסים ל-K9s (<code>:pods</code>) ולוחצים על <code>d</code> (Describe) כדי לראות את ה-<code>Events</code>. הסיבות הנפוצות הן חוסר ב-<code>Toleration</code> ל-Taint של שרתי ה-GPU (<code>untolerated taint</code>) או חוסר בכרטיסי GPU פנויים בשרת בודד (<code>Insufficient nvidia.com/gpu</code>).</p>
-            <p>2. <strong>בדיקת CrashLoopBackOff:</strong> לוחצים על <code>l</code> (Logs) על הפוד הקורס. הסיבה הקלאסית לקריסת NCCL היא שגודל הזיכרון המשותף <code>/dev/shm</code> בברירת מחדל הוא <strong>64MB בלבד</strong>. הפתרון הוא הגדלת הווליום על ידי מיפוי <code>emptyDir: { medium: Memory }</code> לנתיב <code>/dev/shm</code>.</p>
-          </div>
+      <div class="subcard qa-box" onclick="this.classList.toggle('open')">
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+          <h3>שאלה 2: אימון נכשל בגלל תקלת GPU בשרת. אילו פקודות תריץ ומה תעשה אם מצאת Xid 79?</h3>
+          <span class="badge badge-emerald">לחץ להצגת תשובה ▾</span>
         </div>
-
-        <div class="subcard qa-box" onclick="this.classList.toggle('open')">
-          <div style="display:flex; justify-content:space-between; align-items:center;">
-            <h3>שאלה 2: אימון נכשל בגלל תקלת GPU בשרת. אילו פקודות תריץ ומה תעשה אם מצאת Xid 79?</h3>
-            <span class="badge badge-emerald">לחץ להצגת תשובה ▾</span>
-          </div>
-          <div class="qa-answer">
-            <p>1. מריצים <code>nvidia-smi</code> (לבדיקת הכרטיסים ושגיאות <code>Uncorrectable ECC</code>), את הפקודה <code>dmesg</code> (למציאת קודי השגיאה <code>XID</code> של הדרייבר), ואת <code>dcgmi diag -r 3</code> (לבדיקת מאמץ וחומרה).</p>
-            <p>2. שגיאת <code>Xid 79 (GPU has fallen off the bus)</code> אומרת שהכרטיס התנתק מאפיק ה-PCIe. מוציאים את השרת מעבודה (<code>cordon/drain</code> ב-K8s או <code>DRAIN</code> ב-SLURM), מבצעים לשרת <strong>Cold Reboot (Power Cycle)</strong>, ואם שגיאות ECC חוזרות שולחים ל-<strong>RMA</strong>.</p>
-          </div>
+        <div class="qa-answer">
+          <p>1. מריצים <code>nvidia-smi</code> (לבדיקת הכרטיסים ושגיאות <code>Uncorrectable ECC</code>), את הפקודה <code>dmesg</code> (למציאת קודי השגיאה <code>XID</code> של הדרייבר), ואת <code>dcgmi diag -r 3</code> (לבדיקת מאמץ וחומרה).</p>
+          <p>2. שגיאת <code>Xid 79 (GPU has fallen off the bus)</code> אומרת שהכרטיס התנתק מאפיק ה-PCIe. מוציאים את השרת מעבודה (<code>cordon/drain</code> ב-K8s או <code>DRAIN</code> ב-SLURM), מבצעים לשרת <strong>Cold Reboot (Power Cycle)</strong>, ואם שגיאות ECC חוזרות שולחים ל-<strong>RMA</strong>.</p>
         </div>
+      </div>
 
-        <div class="subcard qa-box" onclick="this.classList.toggle('open')">
-          <div style="display:flex; justify-content:space-between; align-items:center;">
-            <h3>שאלה 3: למה משתמשים ב-InfiniBand ו-RDMA ב-Crusoe, ומה ההבדל בין Initializing ל-Down ב-ibstat?</h3>
-            <span class="badge badge-emerald">לחץ להצגת תשובה ▾</span>
-          </div>
-          <div class="qa-answer">
-            <p>1. בכרטיס רשת רגיל העברת נתונים מערבת את מערכת ההפעלה וה-CPU. ברשת InfiniBand עם <strong>RDMA ו-GPUDirect RDMA</strong> הנתונים עוברים ישירות לזיכרון (RAM/VRAM) של השרת המרוחק ללא מעורבות ה-CPU ומערכת ההפעלה – מה שמקצר משמעותית את זמן האימון ומבטיח ניצולת מקסימלית (<strong>MFU</strong>) של החומרה היקרה.</p>
-            <p>2. בפקודה <code>ibstat</code>: פורט ב-<code>Initializing</code> (כש-<code>LinkUp</code>) אומר שהכבל תקין אבל ה-<strong>Subnet Manager (<code>opensm</code>)</strong> לא פעיל ולא הקצה LID. פורט ב-<code>Down</code> מעיד על תקלת כבל אופטי פיזית שבודקים עם <code>perfquery</code> (מוני שגיאות <code>SymbolErrorCounter</code> ו-<code>LinkDownedCounter</code>).</p>
-          </div>
+      <div class="subcard qa-box" onclick="this.classList.toggle('open')">
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+          <h3>שאלה 3: למה משתמשים ב-InfiniBand ו-RDMA ב-Crusoe, ומה ההבדל בין Initializing ל-Down ב-ibstat?</h3>
+          <span class="badge badge-emerald">לחץ להצגת תשובה ▾</span>
         </div>
+        <div class="qa-answer">
+          <p>1. בכרטיס רשת רגיל העברת נתונים מערבת את מערכת ההפעלה וה-CPU. ברשת InfiniBand עם <strong>RDMA ו-GPUDirect RDMA</strong> הנתונים עוברים ישירות לזיכרון (RAM/VRAM) של השרת המרוחק ללא מעורבות ה-CPU ומערכת ההפעלה – מה שמקצר משמעותית את זמן האימון ומבטיח ניצולת מקסימלית (<strong>MFU</strong>) של החומרה היקרה.</p>
+          <p>2. בפקודה <code>ibstat</code>: פורט ב-<code>Initializing</code> (כש-<code>LinkUp</code>) אומר שהכבל תקין אבל ה-<strong>Subnet Manager (<code>opensm</code>)</strong> לא פעיל ולא הקצה LID. פורט ב-<code>Down</code> מעיד על תקלת כבל אופטי פיזית שבודקים עם <code>perfquery</code> (מוני שגיאות <code>SymbolErrorCounter</code> ו-<code>LinkDownedCounter</code>).</p>
+        </div>
+      </div>
 
-        <div class="subcard qa-box" onclick="this.classList.toggle('open')">
-          <div style="display:flex; justify-content:space-between; align-items:center;">
-            <h3>שאלה 4: עבודה תקועה ב-Pending ב-SLURM בגלל שרת ב-DRAIN. אילו פקודות תריץ כדי לבדוק ולשחרר אותו?</h3>
-            <span class="badge badge-emerald">לחץ להצגת תשובה ▾</span>
-          </div>
-          <div class="qa-answer">
-            <p>1. בודקים את מצב השרתים עם <code>sinfo</code> ואת תור העבודות עם <code>squeue</code>.</p>
-            <p>2. אם שרת נמצא ב-<code>drain</code>, מריצים <code>scontrol show node &lt;node_name&gt;</code> כדי לראות את השדה <code>Reason</code> (למשל בדיקת <code>NHC</code> שזיהתה GPU תקול).</p>
-            <p>3. לאחר תיקון השרת, מחזירים אותו לפעילות עם הפקודה: <code>scontrol update NodeName=&lt;node_name&gt; State=RESUME</code>.</p>
-          </div>
+      <div class="subcard qa-box" onclick="this.classList.toggle('open')">
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+          <h3>שאלה 4: עבודה תקועה ב-Pending ב-SLURM בגלל שרת ב-DRAIN. אילו פקודות תריץ כדי לבדוק ולשחרר אותו?</h3>
+          <span class="badge badge-emerald">לחץ להצגת תשובה ▾</span>
+        </div>
+        <div class="qa-answer">
+          <p>1. בודקים את מצב השרתים עם <code>sinfo</code> ואת תור העבודות עם <code>squeue</code>.</p>
+          <p>2. אם שרת נמצא ב-<code>drain</code>, מריצים <code>scontrol show node &lt;node_name&gt;</code> כדי לראות את השדה <code>Reason</code> (למשל בדיקת <code>NHC</code> שזיהתה GPU תקול).</p>
+          <p>3. לאחר תיקון השרת, מחזירים אותו לפעילות עם הפקודה: <code>scontrol update NodeName=&lt;node_name&gt; State=RESUME</code>.</p>
         </div>
       </div>
     </div>
 
   </div>
-
-  <script>
-    function openTab(tabId, btn) {
-      document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
-      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-      document.getElementById(tabId).classList.add('active');
-      btn.classList.add('active');
-    }
-  </script>
 </body>
 </html>
