@@ -1,0 +1,517 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>מדריך ומעבדת הכנה לראיון ב-Crusoe | Kubernetes, GPU, InfiniBand & SLURM</title>
+  <style>
+    :root {
+      --bg: #0f172a;
+      --card: #1e293b;
+      --card-hover: #26354d;
+      --border: #334155;
+      --text: #f8fafc;
+      --muted: #cbd5e1;
+      --primary: #3b82f6;
+      --primary-bg: rgba(59, 130, 246, 0.15);
+      --emerald: #10b981;
+      --emerald-bg: rgba(16, 185, 129, 0.15);
+      --amber: #f59e0b;
+      --amber-bg: rgba(245, 158, 11, 0.15);
+      --rose: #f43f5e;
+      --rose-bg: rgba(244, 63, 94, 0.15);
+      --code-bg: #090d16;
+    }
+    * {
+      box-sizing: border-box;
+    }
+    html, body {
+      direction: rtl;
+      text-align: right;
+      margin: 0;
+      padding: 0;
+      background-color: var(--bg);
+      color: var(--text);
+      font-family: system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      line-height: 1.65;
+    }
+    .container {
+      max-width: 1050px;
+      margin: 0 auto;
+      padding: 24px 16px 60px;
+    }
+    .hero {
+      background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+      border: 1px solid var(--border);
+      border-right: 5px solid var(--primary);
+      border-radius: 16px;
+      padding: 24px;
+      margin-bottom: 24px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.25);
+    }
+    .hero h1 {
+      margin: 0 0 8px 0;
+      font-size: 1.75rem;
+      color: #fff;
+    }
+    .hero p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 0.95rem;
+    }
+    .nav-tabs {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 20px;
+      padding-top: 16px;
+      border-top: 1px solid var(--border);
+    }
+    .tab-btn {
+      background: #0f172a;
+      color: var(--muted);
+      border: 1px solid var(--border);
+      padding: 10px 16px;
+      border-radius: 10px;
+      font-size: 0.88rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .tab-btn:hover {
+      background: var(--card-hover);
+      color: #fff;
+    }
+    .tab-btn.active {
+      background: var(--primary);
+      color: #fff;
+      border-color: var(--primary);
+    }
+    .section {
+      display: none;
+    }
+    .section.active {
+      display: block;
+    }
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 20px;
+      margin-bottom: 16px;
+    }
+    .card h2 {
+      margin: 0 0 12px 0;
+      font-size: 1.25rem;
+      color: #60a5fa;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 8px;
+    }
+    .card h3 {
+      margin: 14px 0 6px 0;
+      font-size: 1.05rem;
+      color: #fff;
+    }
+    .grid-2 {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 14px;
+    }
+    .subcard {
+      background: rgba(15, 23, 42, 0.6);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 14px;
+    }
+    ul, ol {
+      margin: 8px 0;
+      padding-right: 22px;
+      color: var(--muted);
+    }
+    li {
+      margin-bottom: 6px;
+    }
+    strong {
+      color: #fff;
+    }
+    code {
+      direction: ltr;
+      unicode-bidi: embed;
+      display: inline-block;
+      background: rgba(255,255,255,0.1);
+      color: #93c5fd;
+      padding: 1px 6px;
+      border-radius: 5px;
+      font-family: Consolas, Monaco, monospace;
+      font-size: 0.86em;
+      font-weight: 600;
+    }
+    pre {
+      direction: ltr;
+      unicode-bidi: embed;
+      text-align: left;
+      background: var(--code-bg);
+      color: #e2e8f0;
+      border: 1px solid var(--border);
+      padding: 12px 14px;
+      border-radius: 8px;
+      font-family: Consolas, Monaco, monospace;
+      font-size: 0.82rem;
+      overflow-x: auto;
+      margin: 10px 0;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 12px 0;
+      font-size: 0.88rem;
+    }
+    th, td {
+      border: 1px solid var(--border);
+      padding: 10px 12px;
+      text-align: right;
+    }
+    th {
+      background: rgba(59, 130, 246, 0.15);
+      color: #93c5fd;
+      font-weight: 700;
+    }
+    tr:nth-child(even) td {
+      background: rgba(15, 23, 42, 0.4);
+    }
+    .badge {
+      display: inline-block;
+      padding: 3px 10px;
+      border-radius: 999px;
+      font-size: 0.75rem;
+      font-weight: 700;
+    }
+    .badge-emerald { background: var(--emerald-bg); color: var(--emerald); border: 1px solid rgba(16,185,129,0.3); }
+    .badge-amber { background: var(--amber-bg); color: var(--amber); border: 1px solid rgba(245,158,11,0.3); }
+    .badge-rose { background: var(--rose-bg); color: var(--rose); border: 1px solid rgba(244,63,94,0.3); }
+    .qa-box {
+      cursor: pointer;
+      user-select: none;
+    }
+    .qa-answer {
+      display: none;
+      margin-top: 10px;
+      padding-top: 10px;
+      border-top: 1px dashed var(--border);
+      color: var(--muted);
+    }
+    .qa-box.open .qa-answer {
+      display: block;
+    }
+    @media print {
+      body { background: #fff; color: #000; }
+      .card, .subcard, .hero { background: #fff; border-color: #ccc; color: #000; box-shadow: none; }
+      .section { display: block !important; }
+      .nav-tabs { display: none; }
+      strong, h1, h2, h3 { color: #000 !important; }
+      ul, ol, p, td { color: #222 !important; }
+      code { background: #eee; color: #000; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="hero">
+      <div style="display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:12px;">
+        <div>
+          <h1>מדריך ומעבדת הכנה לראיון ב-Crusoe 🚀</h1>
+          <p>לימוד מעשי ותיאורטי מיושר מימין לשמאל: Kubernetes, K9s, GPU &amp; CUDA Drivers, InfiniBand &amp; RDMA, ומערכת התזמון SLURM</p>
+        </div>
+        <div style="display:flex; gap:8px; flex-wrap:wrap;">
+          <a href="Crusoe_Practical_Summary_RTL.pdf" download class="tab-btn" style="text-decoration:none; background:var(--emerald-bg); color:var(--emerald); border-color:var(--emerald);">📥 הורד סיכום מעשי (PDF)</a>
+          <a href="Crusoe_Full_Study_Guide_RTL.pdf" download class="tab-btn" style="text-decoration:none; background:var(--primary-bg); color:#93c5fd; border-color:var(--primary);">📘 הורד מדריך מלא (PDF)</a>
+          <button onclick="window.print()" class="tab-btn">🖨️ הדפסה</button>
+        </div>
+      </div>
+
+      <div class="nav-tabs">
+        <button class="tab-btn active" onclick="openTab('tab-summary', this)">1. סיכום מנהלים ומושגי K8s</button>
+        <button class="tab-btn" onclick="openTab('tab-k9s', this)">2. טבלת פקודות K9s &amp; kubectl</button>
+        <button class="tab-btn" onclick="openTab('tab-k8s-bugs', this)">3. מעבדת K8s: 6 התקלות והפתרונות</button>
+        <button class="tab-btn" onclick="openTab('tab-hpc', this)">4. מעבדת GPU, InfiniBand &amp; SLURM</button>
+        <button class="tab-btn" onclick="openTab('tab-quiz', this)">5. סימולטור שאלות ראיון (לחץ לחשיפת תשובה)</button>
+      </div>
+    </div>
+
+    <!-- TAB 1: SUMMARY & K8S CONCEPTS -->
+    <div id="tab-summary" class="section active">
+      <div class="card">
+        <h2>ליבת Kubernetes (או K8s) בענן GPU של Crusoe</h2>
+        <div class="grid-2">
+          <div class="subcard">
+            <h3>ארכיטקטורת הקלאסטר (Control Plane &amp; Nodes)</h3>
+            <ul>
+              <li><strong>Control Plane:</strong> כולל את <code>kube-apiserver</code> (שער ה-REST API), מסד הנתונים <code>etcd</code> (שומר את כל ה-State), המתזמן <code>kube-scheduler</code> (משבץ פודים לשרתים לפי CPU, RAM ו-GPUs), ו-<code>kube-controller-manager</code>.</li>
+              <li><strong>Worker Nodes:</strong> שרתי ה-GPU הפיזיים (כגון 8x NVIDIA H100). על כל שרת רצים הסוכן <code>kubelet</code>, מנוע הקונטיינרים <code>containerd</code>, ורכיב הרשת <code>kube-proxy</code>.</li>
+              <li><strong>Context:</strong> הגדרה ב-<code>~/.kube/config</code> שמחברת בין Cluster, User ו-Namespace.</li>
+            </ul>
+          </div>
+          <div class="subcard">
+            <h3>Namespace, ResourceQuota &amp; LimitRange</h3>
+            <ul>
+              <li><strong>Namespace:</strong> חלוקה לוגית של הקלאסטר לצוותים או לקוחות שונים (למשל <code>ai-training</code>).</li>
+              <li><strong>ResourceQuota:</strong> מגביל את כמות המשאבים שהצוות יכול לצרוך (למשל מקסימום 16 כרטיסי GPU ב-<code>requests.nvidia.com/gpu</code>).</li>
+              <li><strong>LimitRange:</strong> מזריק ערכי ברירת מחדל של <code>requests/limits</code> עבור CPU ו-Memory לכל פוד חדש כדי שלא יידחה על ידי ה-Quota.</li>
+            </ul>
+          </div>
+          <div class="subcard">
+            <h3>היררכיית הפודים: Pod, ReplicaSet, Deployment, DaemonSet</h3>
+            <ul>
+              <li><strong>Pod:</strong> יחידת העבודה הקטנה ביותר ב-K8s. עוטף קונטיינר אחד או יותר שחולקים IP ודיסקים.</li>
+              <li><strong>ReplicaSet:</strong> שומר שמספר קבוע של עותקים (<code>replicas</code>) ירוץ בכל רגע.</li>
+              <li><strong>Deployment:</strong> מנהל מעל ה-ReplicaSet עדכוני גרסה (<code>RollingUpdate</code> או <code>Recreate</code>) ו-Rollbacks.</li>
+              <li><strong>DaemonSet:</strong> מריץ עותק אחד של פוד על <strong>כל שרת</strong> (משמש לדרייברים של NVIDIA, ל-Device Plugin ולניטור <code>dcgm-exporter</code>).</li>
+            </ul>
+          </div>
+          <div class="subcard">
+            <h3>Services, Secrets, ConfigMaps &amp; Storage (PVC)</h3>
+            <ul>
+              <li><strong>ClusterIP מול Headless Service:</strong> שירות <code>ClusterIP</code> נותן IP וירטואלי יחיד לחלוקת עומסים. לעומת זאת, <strong>Headless Service</strong> (<code>clusterIP: None</code>) מחזיר ב-DNS את כתובות ה-IP הישירות של כל הפודים – קריטי לאימון מבוזר (Distributed Training)!</li>
+              <li><strong>ConfigMap &amp; Secret:</strong> ב-ConfigMap שומרים משתני סביבה (כמו <code>NCCL_DEBUG=INFO</code>), וב-Secret שומרים מפתחות רגישים בקידוד <strong>Base64</strong>.</li>
+              <li><strong>Storage (PV / PVC / StorageClass):</strong> דיסק <code>ReadWriteOnce (RWO)</code> מתחבר לשרת בודד, בעוד <code>ReadWriteMany (RWX)</code> מאפשר לעשרות שרתי GPU לקרוא ולכתוב במקביל לאותה תיקיית Checkpoints (מעל Lustre / WEKA).</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB 2: K9S & KUBECTL CHEAT SHEET -->
+    <div id="tab-k9s" class="section">
+      <div class="card">
+        <h2>טבלת פקודות וקיצורי דרך ב-K9s וב-kubectl</h2>
+        <p style="color:var(--muted); font-size:0.9rem;">חשוב לזכור: ב-K9s קיצורי המקלדת עובדים רק כשהמקלדת במצב אנגלית (<code>ENG</code>)!</p>
+        <table>
+          <thead>
+            <tr>
+              <th>הפעולה שאנחנו רוצים לבצע</th>
+              <th>קיצור הדרך ב-K9s</th>
+              <th>הפקודה המקבילה ב-kubectl</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>מעבר בין משאבים (פודים / שירותים / סודות / מכסות)</strong></td>
+              <td><code>:pods</code> | <code>:svc</code> | <code>:secrets</code> | <code>:quota</code> | <code>:ns</code> | <code>:ctx</code></td>
+              <td><code>kubectl get pods,svc,secrets,quota -n ai-training</code></td>
+            </tr>
+            <tr>
+              <td><strong>בדיקת סיבת תקלה ב-Events (כשפוד ב-<code>Pending</code> או שגיאת קונפיג)</strong></td>
+              <td>מקש <code>d</code> (Describe) וגלילה למטה ל-<code>Events:</code></td>
+              <td><code>kubectl describe pod &lt;pod-name&gt; -n ai-training</code></td>
+            </tr>
+            <tr>
+              <td><strong>בדיקת לוגים של האפליקציה (כשפוד קורס ב-<code>CrashLoopBackOff</code>)</strong></td>
+              <td>מקש <code>l</code> (Logs) (ומקש <code>p</code> לריצה הקודמת שקרסה)</td>
+              <td><code>kubectl logs &lt;pod-name&gt; -n ai-training --previous</code></td>
+            </tr>
+            <tr>
+              <td><strong>פתיחת טרמינל (Shell) חי בתוך הקונטיינר</strong></td>
+              <td>מקש <code>s</code> (Shell)</td>
+              <td><code>kubectl exec -it &lt;pod-name&gt; -n ai-training -- /bin/sh</code></td>
+            </tr>
+            <tr>
+              <td><strong>צפייה או עריכת קובץ ה-YAML של משאב</strong></td>
+              <td>מקש <code>y</code> (צפייה ב-YAML) | מקש <code>e</code> (Edit)</td>
+              <td><code>kubectl get pod &lt;name&gt; -o yaml</code> / <code>kubectl edit</code></td>
+            </tr>
+            <tr>
+              <td><strong>פענוח Secret שמקודד ב-Base64</strong></td>
+              <td>בתוך <code>:secrets</code> לוחצים על מקש <code>x</code> (Decode)</td>
+              <td><code>kubectl get secret &lt;name&gt; -o jsonpath='{.data.KEY}' | base64 -d</code></td>
+            </tr>
+            <tr>
+              <td><strong>מחיקת פוד או החלפתו מקובץ YAML</strong></td>
+              <td>צירוף <code>Ctrl + d</code> (Delete)</td>
+              <td><code>kubectl apply -f file.yaml</code> / <code>kubectl replace --force -f file.yaml</code></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- TAB 3: K8S 6 BUGS LAB -->
+    <div id="tab-k8s-bugs" class="section">
+      <div class="card">
+        <h2>שש תקלות ה-Kubernetes שפתרנו במעבדה (תרחישי ראיון אמיתיים)</h2>
+
+        <div class="subcard" style="margin-bottom:12px;">
+          <div style="display:flex; justify-content:space-between; align-items:center;">
+            <h3>1. הפוד תקוע ב-<code>Pending</code> עם הודעת <code>untolerated taint</code></h3>
+            <span class="badge badge-amber">Scheduler Event</span>
+          </div>
+          <p style="color:var(--muted); margin:6px 0;"><strong>הסיבה:</strong> שרתי ה-GPU מסומנים ב-<strong>Taint</strong> (<code>nvidia.com/gpu=present:NoSchedule</code>) כדי שפודים רגילים ללא GPU לא יתפסו אותם. <strong>הפתרון:</strong> הוספת בלוק <code>tolerations</code> תחת <code>spec</code> ב-YAML של הפוד:</p>
+          <pre>tolerations:
+  - key: "nvidia.com/gpu"
+    operator: "Exists"
+    effect: "NoSchedule"</pre>
+        </div>
+
+        <div class="subcard" style="margin-bottom:12px;">
+          <div style="display:flex; justify-content:space-between; align-items:center;">
+            <h3>2. הפוד תקוע ב-<code>Pending</code> עם הודעת <code>Insufficient nvidia.com/gpu</code></h3>
+            <span class="badge badge-amber">Scheduler Event</span>
+          </div>
+          <p style="color:var(--muted); margin:6px 0;"><strong>הסיבה:</strong> הפוד מבקש יותר כרטיסי GPU ממה שפנוי בשרת בודד (למשל מבקש 8 כרטיסים כשבשרת יש 4), או שכל הכרטיסים תפוסים, או שה-<strong>NVIDIA Device Plugin</strong> נפל. <strong>הפתרון:</strong> התאמת <code>nvidia.com/gpu</code> (ב-<code>requests</code> וב-<code>limits</code>) לקיבולת הפנויה.</p>
+        </div>
+
+        <div class="subcard" style="margin-bottom:12px;">
+          <div style="display:flex; justify-content:space-between; align-items:center;">
+            <h3>3. הפוד תקוע ב-<code>CreateContainerConfigError</code> (<code>Error: secret not found</code>)</h3>
+            <span class="badge badge-rose">Kubelet Error</span>
+          </div>
+          <p style="color:var(--muted); margin:6px 0;"><strong>הסיבה:</strong> ה-Scheduler כבר שיבץ את הפוד לשרת, אבל ה-<strong>kubelet</strong> שעל השרת ניסה להקים את הקונטיינר וגילה ששם ה-Secret תחת <code>secretKeyRef</code> שגוי. <strong>הפתרון:</strong> בדיקת השם ב-<code>:secrets</code> ב-K9s ועדכון ה-YAML.</p>
+        </div>
+
+        <div class="subcard" style="margin-bottom:12px;">
+          <div style="display:flex; justify-content:space-between; align-items:center;">
+            <h3>4. הפוד קורס ב-<code>CrashLoopBackOff</code> בזמן אתחול NCCL (שגיאת <code>/dev/shm</code>)</h3>
+            <span class="badge badge-rose">Application Logs (מקש l)</span>
+          </div>
+          <p style="color:var(--muted); margin:6px 0;"><strong>הסיבה:</strong> גודל הזיכרון המשותף <code>/dev/shm</code> בברירת מחדל בקונטיינר הוא <strong>64MB בלבד</strong>, מה שמפיל את ספריית NCCL ו-PyTorch. <strong>הפתרון:</strong> חיבור דיסק זיכרון (<code>emptyDir: { medium: Memory }</code>) לנתיב <code>/dev/shm</code>:</p>
+          <pre>volumeMounts:
+  - name: dshm
+    mountPath: /dev/shm
+volumes:
+  - name: dshm
+    emptyDir:
+      medium: Memory
+      sizeLimit: 256Mi</pre>
+        </div>
+
+        <div class="subcard" style="margin-bottom:12px;">
+          <div style="display:flex; justify-content:space-between; align-items:center;">
+            <h3>5. מבוי סתום בעדכון גרסה (<code>GPU RollingUpdate Deadlock</code>)</h3>
+            <span class="badge badge-amber">Deployment Strategy</span>
+          </div>
+          <p style="color:var(--muted); margin:6px 0;"><strong>הסיבה:</strong> כשכל כרטיסי ה-GPU תפוסים ומעדכנים Deployment, אסטרטגיית <code>RollingUpdate</code> מנסה להקים פוד חדש <strong>לפני</strong> שהיא מוחקת את הפוד הישן – ולכן הפוד החדש נתקע ב-<code>Pending</code>! <strong>הפתרון:</strong> מחיקת פוד ישן לשחרור GPU, או הגדרת <code>strategy: { type: Recreate }</code> (או <code>maxSurge: 0, maxUnavailable: 1</code>).</p>
+        </div>
+
+        <div class="subcard">
+          <div style="display:flex; justify-content:space-between; align-items:center;">
+            <h3>6. ה-Service לא מעביר תעבורה לפודים (<code>Endpoints: &lt;none&gt;</code>)</h3>
+            <span class="badge badge-rose">Service Selector</span>
+          </div>
+          <p style="color:var(--muted); margin:6px 0;"><strong>הסיבה:</strong> בבדיקת ה-Service ב-<code>:svc</code> עם מקש <code>d</code>, רואים ש-<code>Endpoints: &lt;none&gt;</code> כי ה-<code>selector</code> של ה-Service לא תואם בדיוק ל-<code>labels</code> של הפודים ב-Deployment.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB 4: GPU, INFINIBAND & SLURM LAB -->
+    <div id="tab-hpc" class="section">
+      <div class="card">
+        <h2>מעבדת Bare-Metal: דיאגנוסטיקת GPU/CUDA, InfiniBand ו-SLURM</h2>
+
+        <div class="subcard" style="margin-bottom:14px;">
+          <h3>1. דיאגנוסטיקת GPU ודרייברים (CUDA)</h3>
+          <ul>
+            <li><strong>ההבדל בין NVIDIA Driver ל-CUDA Toolkit:</strong> ה-Kernel Driver (<code>nvidia.ko</code>) מותקן על ה-Node המארח ומדבר עם החומרה. ה-CUDA Toolkit (ספריות כמו <code>libcudart</code>, <code>NCCL</code>) נמצא בתוך ה-Image של הקונטיינר. מנוהל ב-K8s על ידי ה-<strong>NVIDIA GPU Operator</strong>.</li>
+            <li><strong>הפקודות <code>nvidia-smi</code>, <code>dmesg</code> ו-<code>dcgmi diag -r 3</code>:</strong>
+              <ul>
+                <li>ב-<code>nvidia-smi</code> זיהינו שכרטיס <code>GPU 7</code> תקול עם 14 שגיאות <code>Volatile Uncorr. ECC</code>.</li>
+                <li>ב-<code>dmesg</code> מצאנו את קוד השגיאה <strong><code>Xid 79: GPU has fallen off the bus</code></strong> (הכרטיס התנתק פיזית מאפיק ה-PCIe). איפוס תוכנה לא יעזור – חובה להוציא את השרת מעבודה (<code>cordon/drain</code>), לבצע <strong>Cold Reboot (Power Cycle)</strong> ולהריץ בדיקת מאמץ <code>dcgmi diag -r 3</code>.</li>
+                <li>אם שגיאות ה-<code>Uncorrectable ECC</code> (כגון <code>Xid 63</code>) חוזרות, שולחים את הכרטיס להחלפת חומרה (<strong>RMA</strong>).</li>
+              </ul>
+            </li>
+          </ul>
+        </div>
+
+        <div class="subcard" style="margin-bottom:14px;">
+          <h3>2. רשתות InfiniBand (IB) ו-RDMA</h3>
+          <ul>
+            <li><strong>למה InfiniBand ו-RDMA ב-AI?</strong> בכרטיס רשת Ethernet רגיל העברת הנתונים עוברת דרך מערכת ההפעלה וה-CPU, מה שיוצר צוואר בקבוק. ב-InfiniBand עם <strong>RDMA</strong> ו-<strong>GPUDirect RDMA</strong>, כרטיס הרשת (<strong>HCA</strong> ConnectX-7) מעביר את הנתונים ישירות לזיכרון ה-RAM/VRAM של השרת המרוחק ללא מעורבות ה-CPU ומערכת ההפעלה – מה שמקצר משמעותית את זמן האימון ומבטיח ניצולת מקסימלית (<strong>MFU</strong>) של החומרה היקרה!</li>
+            <li><strong>הפקודות <code>ibstat</code> ו-<code>perfquery</code>:</strong>
+              <ul>
+                <li><code>State: Active</code> + <code>Physical state: LinkUp</code> = הפורט תקין ומוכן להעברת נתונים (400Gbps NDR).</li>
+                <li><code>State: Initializing</code> + <code>Physical state: LinkUp</code> (עם <code>Base lid: 0</code>) = החיבור הפיזי תקין, אך ה-<strong>Subnet Manager (<code>opensm</code>)</strong> לא פעיל ולא הקצה כתובת LID לפורט!</li>
+                <li><code>State: Down</code> + <code>Physical state: Polling</code> ובפקודה <code>perfquery</code> מונים גבוהים של <code>SymbolErrorCounter</code> ו-<code>LinkDownedCounter</code> = תקלת שכבה 1 (Link Flapping עקב סיב אופטי מלוכלך/פגום או Transceiver תקול).</li>
+              </ul>
+            </li>
+          </ul>
+        </div>
+
+        <div class="subcard">
+          <h3>3. מערכת התזמון SLURM</h3>
+          <ul>
+            <li><strong>ארכיטקטורה:</strong> הבקר המרכזי <code>slurmctld</code>, הסוכן על כל שרת <code>slurmd</code>, ושירות הדאטהבייס <code>slurmdbd</code>. הקצאת GPUs מתבצעת עם <strong>GRES</strong> (<code>--gres=gpu:8</code>).</li>
+            <li><strong>פקודות ליבה:</strong>
+              <ul>
+                <li><code>sinfo</code> – בדיקת מצב התורים והשרתים (<code>idle</code> פנוי, <code>alloc</code> תפוס, <code>drain</code> מנוקז לתחזוקה).</li>
+                <li><code>squeue</code> – בדיקת תור העבודות הרצות (<code>R</code>) והממתינות (<code>PD</code> וסיבת ההמתנה כמו <code>(Resources)</code>).</li>
+                <li><code>scontrol show node &lt;node_name&gt;</code> – בדיקת הסיבה המדויקת שבגללה השרת נכנס ל-<code>DRAIN</code> (למשל בדיקת בריאות אוטומטית <code>NHC</code> שזיהתה Xid 79).</li>
+                <li><code>scontrol update NodeName=&lt;node_name&gt; State=RESUME</code> – החזרת השרת לפעילות לאחר התיקון כך שהעבודות הממתינות ב-<code>squeue</code> יתחילו לרוץ מיד!</li>
+              </ul>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB 5: INTERACTIVE QUIZ FLASHCARDS -->
+    <div id="tab-quiz" class="section">
+      <div class="card">
+        <h2>סימולטור שאלות ראיון ב-Crusoe (לחץ על כל שאלה לחשיפת התשובה!)</h2>
+
+        <div class="subcard qa-box" onclick="this.classList.toggle('open')" style="margin-bottom:12px;">
+          <div style="display:flex; justify-content:space-between; align-items:center;">
+            <h3>שאלה 1: פוד GPU תקוע ב-Pending ואחרי שעלה קורס ב-CrashLoopBackOff ב-NCCL. איך תחקור ותפתור?</h3>
+            <span class="badge badge-emerald">לחץ להצגת תשובה ▾</span>
+          </div>
+          <div class="qa-answer">
+            <p>1. <strong>בדיקת Pending:</strong> נכנסים ל-K9s (<code>:pods</code>) ולוחצים על <code>d</code> (Describe) כדי לראות את ה-<code>Events</code>. הסיבות הנפוצות הן חוסר ב-<code>Toleration</code> ל-Taint של שרתי ה-GPU (<code>untolerated taint</code>) או חוסר בכרטיסי GPU פנויים בשרת בודד (<code>Insufficient nvidia.com/gpu</code>).</p>
+            <p>2. <strong>בדיקת CrashLoopBackOff:</strong> לוחצים על <code>l</code> (Logs) על הפוד הקורס. הסיבה הקלאסית לקריסת NCCL היא שגודל הזיכרון המשותף <code>/dev/shm</code> בברירת מחדל הוא <strong>64MB בלבד</strong>. הפתרון הוא הגדלת הווליום על ידי מיפוי <code>emptyDir: { medium: Memory }</code> לנתיב <code>/dev/shm</code>.</p>
+          </div>
+        </div>
+
+        <div class="subcard qa-box" onclick="this.classList.toggle('open')" style="margin-bottom:12px;">
+          <div style="display:flex; justify-content:space-between; align-items:center;">
+            <h3>שאלה 2: אימון נכשל בגלל תקלת GPU בשרת. אילו פקודות תריץ ומה תעשה אם מצאת Xid 79?</h3>
+            <span class="badge badge-emerald">לחץ להצגת תשובה ▾</span>
+          </div>
+          <div class="qa-answer">
+            <p>1. מריצים <code>nvidia-smi</code> (לבדיקת הכרטיסים ושגיאות <code>Uncorrectable ECC</code>), את הפקודה <code>dmesg</code> (למציאת קודי השגיאה <code>XID</code> של הדרייבר), ואת <code>dcgmi diag -r 3</code> (לבדיקת מאמץ וחומרה).</p>
+            <p>2. שגיאת <code>Xid 79 (GPU has fallen off the bus)</code> אומרת שהכרטיס התנתק מאפיק ה-PCIe. מוציאים את השרת מעבודה (<code>cordon/drain</code> ב-K8s או <code>DRAIN</code> ב-SLURM), מבצעים לשרת <strong>Cold Reboot (Power Cycle)</strong>, ואם שגיאות ECC חוזרות שולחים ל-<strong>RMA</strong>.</p>
+          </div>
+        </div>
+
+        <div class="subcard qa-box" onclick="this.classList.toggle('open')" style="margin-bottom:12px;">
+          <div style="display:flex; justify-content:space-between; align-items:center;">
+            <h3>שאלה 3: למה משתמשים ב-InfiniBand ו-RDMA ב-Crusoe, ומה ההבדל בין Initializing ל-Down ב-ibstat?</h3>
+            <span class="badge badge-emerald">לחץ להצגת תשובה ▾</span>
+          </div>
+          <div class="qa-answer">
+            <p>1. בכרטיס רשת רגיל העברת נתונים מערבת את מערכת ההפעלה וה-CPU. ברשת InfiniBand עם <strong>RDMA ו-GPUDirect RDMA</strong> הנתונים עוברים ישירות לזיכרון (RAM/VRAM) של השרת המרוחק ללא מעורבות ה-CPU ומערכת ההפעלה – מה שמקצר משמעותית את זמן האימון ומבטיח ניצולת מקסימלית (<strong>MFU</strong>) של החומרה היקרה.</p>
+            <p>2. בפקודה <code>ibstat</code>: פורט ב-<code>Initializing</code> (כש-<code>LinkUp</code>) אומר שהכבל תקין אבל ה-<strong>Subnet Manager (<code>opensm</code>)</strong> לא פעיל ולא הקצה LID. פורט ב-<code>Down</code> מעיד על תקלת כבל אופטי פיזית שבודקים עם <code>perfquery</code> (מוני שגיאות <code>SymbolErrorCounter</code> ו-<code>LinkDownedCounter</code>).</p>
+          </div>
+        </div>
+
+        <div class="subcard qa-box" onclick="this.classList.toggle('open')">
+          <div style="display:flex; justify-content:space-between; align-items:center;">
+            <h3>שאלה 4: עבודה תקועה ב-Pending ב-SLURM בגלל שרת ב-DRAIN. אילו פקודות תריץ כדי לבדוק ולשחרר אותו?</h3>
+            <span class="badge badge-emerald">לחץ להצגת תשובה ▾</span>
+          </div>
+          <div class="qa-answer">
+            <p>1. בודקים את מצב השרתים עם <code>sinfo</code> ואת תור העבודות עם <code>squeue</code>.</p>
+            <p>2. אם שרת נמצא ב-<code>drain</code>, מריצים <code>scontrol show node &lt;node_name&gt;</code> כדי לראות את השדה <code>Reason</code> (למשל בדיקת <code>NHC</code> שזיהתה GPU תקול).</p>
+            <p>3. לאחר תיקון השרת, מחזירים אותו לפעילות עם הפקודה: <code>scontrol update NodeName=&lt;node_name&gt; State=RESUME</code>.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    function openTab(tabId, btn) {
+      document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+      document.getElementById(tabId).classList.add('active');
+      btn.classList.add('active');
+    }
+  </script>
+</body>
+</html>
