@@ -340,13 +340,56 @@
       </div>
 
       <div class="nav-tabs">
-        <a href="#part-1" class="tab-btn active">חלק 1: ליבת Kubernetes</a>
+        <a href="#part-rishabh" class="tab-btn active" style="background:var(--amber); border-color:var(--amber); color:#0f172a;">🎯 מיוחד למחר: ראיון עם Rishabh Sinha</a>
+        <a href="#part-1" class="tab-btn">חלק 1: ליבת Kubernetes</a>
         <a href="#part-2" class="tab-btn">חלק 2: עבודה מהירה עם K9s</a>
         <a href="#part-3" class="tab-btn">חלק 3: מעבדי GPU ו-CUDA</a>
         <a href="#part-4" class="tab-btn">חלק 4: רשתות InfiniBand ו-RDMA</a>
         <a href="#part-5" class="tab-btn">חלק 5: מערכת התזמון SLURM</a>
         <a href="#part-6" class="tab-btn">חלק 6: תרחישי תקלות ושאלות ראיון</a>
         <a href="#part-lab" class="tab-btn" style="border-color:var(--emerald); color:#6ee7b7;">🛠️ תרגול מעבדה ושאלות חזרה</a>
+      </div>
+    </div>
+
+    <!-- ==========================================
+         הכנה ממוקדת לראיון מחר ב-12:30 עם Rishabh Sinha
+         ========================================== -->
+    <div id="part-rishabh" class="card" style="border-color:var(--amber); border-right:5px solid var(--amber);">
+      <h2>🎯 הכנה ממוקדת לראיון מחר (12:30) עם Rishabh Sinha (Senior Cloud Support Engineer)</h2>
+      <p style="color:var(--muted);"><strong>מודיעין על המראיין שלך:</strong> Rishabh Sinha הוא מהנדס Senior Cloud Support ב-Crusoe והכותב של מדריכי פתרון התקלות הרשמיים של Crusoe Cloud (בפורטל <code>support.crusoecloud.com</code>) בתחומי <strong>CMK (Crusoe Managed Kubernetes)</strong>, ניטור <strong>DCGM &amp; crusoe-watch-agent</strong>, דרייברים של <strong>MOFED InfiniBand</strong>, בדיקות <strong>NCCL / DeepEP</strong> וחשיפת שירותים ב-<strong>NodePort / VMs</strong>.</p>
+
+      <div class="subcard" style="border-color:rgba(245,158,11,0.4);">
+        <h3>🧭 נוסחת 4 השלבים ש-Rishabh מחפש בכל תשובה לתקלת לקוח:</h3>
+        <ol>
+          <li><strong>היקף התקלה (Scope &amp; Blast Radius):</strong> האם הבעיה בשרת GPU בודד (Single Node), במספר שרתים (Multi-Node), או בכל הקלאסטר?</li>
+          <li><strong>איסוף מידע לא-הרסני (Non-Destructive Triage):</strong> קודם בודקים לוגים ואירועים לפני שמאתחלים: <code>kubectl describe</code> / <code>K9s</code>, <code>dmesg -T</code>, <code>nvidia-smi</code>, <code>ibstat</code>, <code>sinfo</code> / <code>scontrol</code>.</li>
+          <li><strong>בידוד השכבה (Layer Isolation):</strong> חומרה (XID 79 / ECC / סיב אופטי) ⬅ דרייבר/קרנל (<code>nvidia.ko</code>, <code>fabricmanager</code>, <code>MOFED</code>) ⬅ תזמון/קונטיינר (Taints, <code>/dev/shm</code>, Race Condition ב-DaemonSet) ⬅ אפליקציה.</li>
+          <li><strong>שחרור הלקוח ומניעה (Mitigation &amp; Remediation):</strong> בידוד השרת התקול עם <code>kubectl cordon/drain</code> (או <code>State=DRAIN</code> ב-SLURM) כדי שהלקוח ימשיך לרוץ על שרת תקין, והרצת <code>dcgmi diag -r 3</code>.</li>
+        </ol>
+      </div>
+
+      <div class="subcard qa-box" onclick="this.classList.toggle('open')">
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+          <h3>שאלת מפתח של Rishabh #1: שרת GPU עלה ב-CMK אבל חסרים מדדי GPU (DCGM) או שפודים לא רואים GPUs. מה תבדוק?</h3>
+          <span class="badge badge-amber">לחץ לתשובת מחץ ▾</span>
+        </div>
+        <div class="qa-answer">
+          <p>1. בודקים את ה-<strong>DaemonSets</strong> של ה-<strong>NVIDIA GPU Operator</strong> על אותו Node: <code>nvidia-driver-daemonset</code>, <code>nvidia-device-plugin</code>, <code>dcgm-exporter</code>, וסוכן הטלמטריה של Crusoe (<code>crusoe-watch-agent</code>).</p>
+          <p>2. <strong>Startup Race Condition (נושא ש-Rishabh כתב עליו מאמר רשמי!):</strong> לעיתים בעליית שרת חדש, ה-<code>dcgm-exporter</code> או <code>crusoe-watch-agent</code> (או מודול אחסון התלוי ב-<code>MOFED</code>) עולים <strong>לפני</strong> שדרייבר הקרנל של NVIDIA/Mellanox סיים להיטען. מוודאים בשרת ש-<code>nvidia-smi</code> תקין ומבצעים Restart לפוד של ה-DaemonSet הרלוונטי.</p>
+        </div>
+      </div>
+
+      <div class="subcard qa-box" onclick="this.classList.toggle('open')">
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+          <h3>שאלת מפתח של Rishabh #2: לקוח הקים שרת Inference (כמו Ollama / vLLM) ב-K8s או VM ולא מצליח להתחבר אליו מבחוץ. איך תבודד?</h3>
+          <span class="badge badge-amber">לחץ לתשובת מחץ ▾</span>
+        </div>
+        <div class="qa-answer">
+          <p>עובדים מהפנים החוצה (Inside-Out):</p>
+          <p>1. <strong>בתוך הקונטיינר / VM:</strong> מוודאים עם <code>ss -tulpn</code> שהתהליך מאזין על <code>0.0.0.0</code> (כל הממשקים) ולא רק על <code>127.0.0.1</code> (<code>localhost</code>), ובודקים מקומית עם <code>curl localhost:&lt;port&gt;</code>.</p>
+          <p>2. <strong>בשכבת ה-Service ב-K8s:</strong> בודקים עם <code>kubectl describe svc</code> (או <code>:svc</code> ב-K9s) ששדה ה-<code>Endpoints</code> מכיל את ה-IP של הפוד (ולא <code>&lt;none&gt;</code> בגלל <code>selector</code> שגוי) ושה-<code>targetPort</code> תואם לפורט הקונטיינר.</p>
+          <p>3. <strong>בשכבת הרשת של Crusoe Cloud:</strong> אם השירות חשוף ב-<code>NodePort</code> (טווח <code>30000-32767</code>) או על VM, מוודאים שיש לשרת <strong>Static Public IP</strong> ושהפורט פתוח ב-<strong>Crusoe VPC Firewall Rules</strong>.</p>
+        </div>
       </div>
     </div>
 
